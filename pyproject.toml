@@ -6,6 +6,10 @@ authors = ["Andriy Smolyanyuk <andriysmolyanyuk@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
+numpy = "^1.19.5"
+ase = "^3.22.1"
+spglib = "^2.0.0"
+Diophantine = "^0.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
