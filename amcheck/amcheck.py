@@ -219,6 +219,10 @@ def is_altermagnet(symops, atom_positions, equiv_atoms, chemical_symbols, spins,
         atom_ids = np.where(equiv_atoms == u)[0]
         orbit_positions = atom_positions[atom_ids]
 
+        if verbose:
+            print()
+            print("Orbit of {} atoms:".format(chemical_symbols[atom_ids[0]]))
+
         if len(orbit_positions) == 1:
             print("Only one atom in the orbit: skipping.")
             continue
@@ -469,9 +473,12 @@ analysis: {} (spglib) vs {} (input)!".format(sg_no, atoms.info['spacegroup'].no)
                 spins.append(orbit_spins)
 
             spins = [s for sublist in spins for s in sublist]  # flatten
-            print("Altermagnet?", is_altermagnet(symops, atoms.get_scaled_positions(),
-                                                 equiv_atoms, chemical_symbols,
-                                                 spins, args.tol, args.verbose))
+            is_am = is_altermagnet(symops, atoms.get_scaled_positions(),
+                                   equiv_atoms, chemical_symbols, spins,
+                                   args.tol, args.verbose)
+
+            print()
+            print("Altermagnet?", is_am)
 
         except Exception as error:
             eprint("[ERROR] " + str(error))
