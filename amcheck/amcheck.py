@@ -480,6 +480,9 @@ analysis: {} (spglib) vs {} (input)!".format(sg_no, atoms.info['spacegroup'].no)
             print()
             print("Altermagnet?", is_am)
 
+        except ase.io.formats.UnknownFileTypeError as error:
+            eprint("[ERROR] " + "ASE: unknown file type ({})".format(str(error)))
+
         except Exception as error:
             eprint("[ERROR] " + str(error))
 
@@ -537,6 +540,10 @@ definition!")
                   spglib.get_magnetic_spacegroup_type(MSG['uni_number']))
             print()
             print(ahc_data.ahc_types[ahc_data.get_ahc_type(MSG['uni_number'])])
+
+        except ase.io.formats.UnknownFileTypeError as error:
+            eprint("[ERROR] " + "ASE: unknown file type ({})".format(str(error)))
+
         except Exception as error:
             eprint("[ERROR] " + str(error))
 
