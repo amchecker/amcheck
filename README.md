@@ -29,7 +29,8 @@ To mark entire group as non-magnetic one can use 'nn' or 'NN' designation.
 Note that here we treat spins as scalars (up and down, black and white),
 not as pseudovectors and, thus, no spacial anisotropy for spins is assumed.
 
-## Example
+## Examples
+### Checking if the material is altermagnetic
 ```
 $ amcheck.py Mn3Fe.cif Mn3Fe.cif
 ================================================================================
@@ -82,7 +83,8 @@ u d
 Altermagnet? True
 ```
 
-## Using as a library
+
+### Using as a library
 Here is a code snippet providing an example on how to use the `amcheck` as a
 library:
 ```
@@ -104,6 +106,39 @@ chem_symbols = ['Mn', 'Mn', 'Mn', 'Mn', 'Mn', 'Mn', 'Fe', 'Fe']
 spins = ['u', 'u', 'u', 'd', 'd', 'd', 'u', 'd']
 is_altermagnet(symops, positions, equiv_atoms, chem_symbols, spins)
 ```
+
+
+### Determining the form of Anomalous Hall coefficient
+```
+$ amcheck.py FeSb2.cif
+================================================================================
+Processing: FeSb2.cif
+--------------------------------------------------------------------------------
+List of atoms:
+Fe [0. 0. 0.]
+Fe [0.5 0.5 0.5]
+Sb [0.1885 0.3561 0.    ]
+Sb [0.8115 0.6439 0.    ]
+Sb [0.3115 0.8561 0.5   ]
+Sb [0.6885 0.1439 0.5   ]
+
+Type magnetic moments for each atom ('mx my mz' or empty line for non-magnetic atom):
+1 0 0
+-1 0 0
+0 0 0
+0 0 0
+0 0 0
+0 0 0
+Magnetic moments assigned:
+[[1.0, 0.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+
+Magnetic Space Group: {'uni_number': 496, 'litvin_number': 476, 'bns_number': '58.398', 'og_number': '58.6.476', 'number': 58, 'type': 3}
+
+ σxx  σxy   0
+-σxy  σyy   0
+  0    0   σzz
+```
+
 
 ## Contributors
 Andriy Smolyanyuk[1], Olivia Taiwo[2], Libor Šmejkal[3] and Igor I. Mazin[4]
