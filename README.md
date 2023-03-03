@@ -108,9 +108,13 @@ is_altermagnet(symops, positions, equiv_atoms, chem_symbols, spins)
 
 ## Contributors
 Andriy Smolyanyuk[1], Olivia Taiwo[2], Libor Šmejkal[3] and Igor I. Mazin[4]
+
 [1] Technische Universität Wien, Vienna, Austria
+
 [2] Princeton University, Princeton, USA
+
 [3] Johannes Gutenberg Universität Mainz, Mainz, Germany
+
 [4] George Mason University, Fairfax, USA
 
 ## How to cite
