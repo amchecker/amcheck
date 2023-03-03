@@ -1,6 +1,6 @@
 # amcheck
 `amcheck` is the program/library to check, based on the symmetry arguments,
-if a given structure is an altermagnet or not.
+if a given material is an altermagnet or not.
 
 To describe the material of interest user is supposed to provide a crystal
 structure and a magnetic pattern.
@@ -13,21 +13,20 @@ thus an antiferromagnet.
 
 ## Installation
 The code is written in `python` and has the following libraries as its 
-dependencies: `ase`, `spglib` and `diophantine`.
-Which one can install using `pip`:
+dependencies: `ase`, `spglib` and `diophantine`, that can be installed using `pip`:
 ```
 pip install ase spglib diophantine
 ```
 
 ## Usage
 To use it as a command line tool, one provides one or more structure files
-(it will internally loops over all listed files) and, when prompted,
+(the code will internally loops over all listed files) and, when prompted,
 types in spin designation for each atom: 'u' or 'U' for spin-up, 'd' or 'D'
 for spin-down and 'n' or 'N' if atom is non-magnetic.
 All atoms will be grouped into sets of symmetry-related atoms (orbits) and user
-will need to provide spin designation per such a group.
+will need to provide spin designations per such a group.
 To mark entire group as non-magnetic one can use 'nn' or 'NN' designation.
-Note that here we threat spins as scalars (up and down, black and white),
+Note that here we treat spins as scalars (up and down, black and white),
 not as pseudovectors and, thus, no spacial anisotropy for spins is assumed.
 
 ## Example
