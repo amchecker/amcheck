@@ -1,4 +1,4 @@
-# amcheck
+# amcheck (WIP)
 `amcheck` is the program/library to check, based on the symmetry arguments,
 if a given material is an altermagnet or not.
 
@@ -26,7 +26,7 @@ for spin-down and 'n' or 'N' if atom is non-magnetic.
 All atoms will be grouped into sets of symmetry-related atoms (orbits) and user
 will need to provide spin designations per such a group.
 To mark entire group as non-magnetic one can use 'nn' or 'NN' designation.
-Note that here we treat spins as scalars (up and down, black and white),
+Note that here we treat spins as pseudoscalars (up and down, black and white),
 not as pseudovectors and, thus, no spacial anisotropy for spins is assumed.
 
 ## Examples
