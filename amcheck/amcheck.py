@@ -341,8 +341,10 @@ def main(args):
                     print("WARNING: space group from the input is different from the spglib \
 analysis: {} (spglib) vs {} (input)!".format(sg_no, atoms.info['spacegroup'].no))
 
-            primitive = spglib.find_primitive((atoms.cell, atoms.get_scaled_positions(), atoms.numbers),
-                                              symprec=args.symprec)
+            primitive = spglib.standardize_cell((atoms.cell, atoms.get_scaled_positions(),
+                                                 atoms.numbers),
+                                                to_primitive=True, no_idealize=True,
+                                                symprec=args.symprec)
             prim_cell, prim_pos, prim_num = primitive
 
             # The given unit cell might be non-primitive and if it is the case
