@@ -381,6 +381,13 @@ analysis: {} (spglib) vs {} (input)!".format(sg_no, atoms.info['spacegroup'].no)
                     # S = T*P, where S is a unit cell of a supercell and P of
                     # a primitive cell
                     T = np.rint(np.dot(cell, np.linalg.inv(prim_cell)))
+
+                    det_T = np.linalg.det(T)
+                    det_ratios = np.linalg.det(cell)/np.linalg.det(prim_cell)
+                    assert np.isclose(det_T, det_ratios),\
+                    "Sanity check: the determinant of transformation is not equal to \
+original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_ratios)
+
                     if args.verbose:
                         print(
                             "Transformation from primitive to non-primitive cell, T:")
