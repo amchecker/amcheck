@@ -573,12 +573,12 @@ if __name__ == "__main__":
     parser.add_argument('-t', '--tol', '--tolerance', default=DEFAULT_TOLERANCE, type=float,
                         help="tolerance for numerical checks inside of amcheck.py")
 
-    parser.add_argument('--ahc_type', action='store_true',
+    parser.add_argument('--ahc', action='store_true',
                         help="Determine the possible form of Anomalous Hall Coefficient")
 
     args = parser.parse_args()
 
-    if args.ahc_type:
+    if args.ahc:
         main_ahc_type(args)
     else:
         main(args)
