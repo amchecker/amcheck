@@ -11,8 +11,30 @@ def test_version():
 
 
 def test_check_altermagnetism_orbit():
-    symops = [(np.array([[-1,  0,  0], [0, -1,  0], [0,  0, -1]], dtype=int),
-               np.array([2.e-06, 2.e-06, 0.e+00]))]
+    symops = [(np.array([[ 1,  0,  0], [ 0,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[-1,  0,  0], [ 0, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 1, -1,  0], [ 1,  0,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[-1,  1,  0], [-1,  0,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 0, -1,  0], [ 1, -1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 0,  1,  0], [-1,  1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[-1,  0,  0], [ 0, -1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 1,  0,  0], [ 0,  1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[-1,  1,  0], [-1,  0,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 1, -1,  0], [ 1,  0,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 0,  1,  0], [-1,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 0, -1,  0], [ 1, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 0, -1,  0], [-1,  0,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 0,  1,  0], [ 1,  0,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[-1,  0,  0], [-1,  1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 1,  0,  0], [ 1, -1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[-1,  1,  0], [ 0,  1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 1, -1,  0], [ 0, -1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 0,  1,  0], [ 1,  0,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 0, -1,  0], [-1,  0,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 1,  0,  0], [ 1, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[-1,  0,  0], [-1,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 1, -1,  0], [ 0, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[-1,  1,  0], [ 0,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.0]))]
     positions = np.array([[0.156793, 0.313586, 0.75],
                           [0.843207, 0.686414, 0.25],
                           [0.686414, 0.843207, 0.75],
@@ -30,8 +52,31 @@ def test_check_altermagnetism_orbit():
 
 
 def test_is_altermagnet():
-    symops = [(np.array([[-1,  0,  0], [0, -1,  0], [0,  0, -1]], dtype=int),
-               np.array([2.e-06, 2.e-06, 0.e+00]))]
+    symops = [(np.array([[ 1,  0,  0], [ 0,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[-1,  0,  0], [ 0, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 1, -1,  0], [ 1,  0,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[-1,  1,  0], [-1,  0,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 0, -1,  0], [ 1, -1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 0,  1,  0], [-1,  1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[-1,  0,  0], [ 0, -1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 1,  0,  0], [ 0,  1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[-1,  1,  0], [-1,  0,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 1, -1,  0], [ 1,  0,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 0,  1,  0], [-1,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 0, -1,  0], [ 1, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 0, -1,  0], [-1,  0,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 0,  1,  0], [ 1,  0,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[-1,  0,  0], [-1,  1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 1,  0,  0], [ 1, -1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[-1,  1,  0], [ 0,  1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 1, -1,  0], [ 0, -1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 0,  1,  0], [ 1,  0,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 0, -1,  0], [-1,  0,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[ 1,  0,  0], [ 1, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[-1,  0,  0], [-1,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.5])),
+              (np.array([[ 1, -1,  0], [ 0, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.0])),
+              (np.array([[-1,  1,  0], [ 0,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.0]))]
+
     positions = np.array([[0.156793, 0.313586, 0.75],
                           [0.843207, 0.686414, 0.25],
                           [0.686414, 0.843207, 0.75],

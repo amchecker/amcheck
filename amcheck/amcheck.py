@@ -96,6 +96,7 @@ number of spin designation: got {} and {} instead!".format(len(positions),
     is_altermagnet = False
 
     is_in_sym_related_pair = np.zeros(len(positions))
+    is_in_IT_related_pair  = np.zeros(len(positions))
     # Check if inversion symmetry is present in midpoint of the pair of
     # magnetic atoms with opposite spin directions or if they are related by
     # translation
@@ -110,6 +111,18 @@ number of spin designation: got {} and {} instead!".format(len(positions),
 
             for symop in symops:
                 R, t = symop
+
+                # check if up and down pair is related by some symmetry
+                dp = np.mod(np.dot(R, positions[i]) + t - positions[j], 1)
+                # a possible issue with numbers close to one
+                for k in range(3):
+                    if abs(1.0-dp[k]) < tol:
+                        dp[k] = 0.0
+
+                if np.linalg.norm(dp) < tol:
+                    is_in_sym_related_pair[i] = 1
+                    is_in_sym_related_pair[j] = 1
+
                 # if symop is inversion
                 if (abs(np.trace(R)+3) < tol):
                     midpoint_prime = np.dot(symop[0], midpoint) + symop[1]
@@ -128,8 +141,8 @@ number of spin designation: got {} and {} instead!".format(len(positions),
                         # mark atoms i and j as the ones belonging to the pair
                         # of opposite spins that has an inversion point at its
                         # midpoint
-                        is_in_sym_related_pair[i] = 1
-                        is_in_sym_related_pair[j] = 1
+                        is_in_IT_related_pair[i] = 1
+                        is_in_IT_related_pair[j] = 1
                         if verbose:
                             print("Atoms {} and {} are related by inversion (midpoint {}).".format(i+1,
                                                                                                    j+1, midpoint))
@@ -144,19 +157,28 @@ number of spin designation: got {} and {} instead!".format(len(positions),
 
                     if np.linalg.norm(dp) < tol:
                         # atoms i and j are related by translation
-                        is_in_sym_related_pair[i] = 1
-                        is_in_sym_related_pair[j] = 1
+                        is_in_IT_related_pair[i] = 1
+                        is_in_IT_related_pair[j] = 1
                         if verbose:
                             print("Atoms {} and {} are related by translation {}.".format(
                                 i+1, j+1, t))
 
     if verbose:
-        print("Symmetry related atoms (1-yes, 0-no):", is_in_sym_related_pair)
+        print("Atoms related by inversion/translation (1-yes, 0-no):", is_in_IT_related_pair)
+    if verbose:
+        print("Atoms related by some symmetry (1-yes, 0-no):", is_in_sym_related_pair)
+
+    is_Luttinger_ferrimagnet = abs(np.sum(is_in_sym_related_pair)-len(positions)) > tol
+    if verbose:
+        if is_Luttinger_ferrimagnet:
+            print("Up and down sublattices are not related by any symmetry: the material is Luttinger ferrimagnet")
+
     # This orbit of magnetic atoms will produce an AF if all its atoms belong
     # to some pair of opposite spins that either has an inversion at its
     # midpoint or are related by a translation.
     # Otherwise it's an altermagnet.
-    is_altermagnet = abs(np.sum(is_in_sym_related_pair)-len(positions)) > tol
+    is_altermagnet = abs(np.sum(is_in_IT_related_pair)-len(positions)) > tol
+    is_altermagnet &= not is_Luttinger_ferrimagnet
 
     return is_altermagnet
 
@@ -434,15 +456,10 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
                 print("Number of symmetry operations: ",
                       len(rotations), len(translations))
 
-            symops = []
-            for (r, t) in zip(rotations, translations):
-                # if there is an inversion or pure translation
-                if (abs(np.trace(r)+3) < args.tol) or \
-                   (abs(np.trace(r)-3) < args.tol and np.linalg.norm(t) > args.tol):
-                    symops.append((r, t))
+            symops = [(r,t) for (r, t) in zip(rotations, translations)]
 
             if args.verbose:
-                print("Relevant symmetry operations:")
+                print("Symmetry operations:")
                 for (i, (r, t)) in enumerate(symops):
                     sym_type = ""
                     if (abs(np.trace(r)+3) < args.tol):
