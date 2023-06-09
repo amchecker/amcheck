@@ -419,7 +419,7 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
 
                     # All possible supercells can be grouped by det(T) and
                     # within each group the amount of possible distinct
-                    # supercell is finite.
+                    # supercells is finite.
                     # All of them can be enumerated using the Hermite Normal
                     # Form, H.
                     H, _, _ = lllhermite(T)
@@ -437,12 +437,14 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
                     # The final collection of symmetry operators is a copy of
                     # original augmented by the new translations:
                     # (R,t) = (R0,t0)*{(E,0) + (E,t1) + ... + (E,tN)}
+                    # However, original fractional translations should be transformed
+                    # to the basis of a new cell as well.
                     N = int(np.rint(np.linalg.det(H)))
                     rotations = np.tile(rotations, (N, 1, 1))
                     translations = np.tile(translations, (N, 1))
                     for (i, t) in enumerate(tau):
                         for j in range(i*N_ops_prim, (i+1)*N_ops_prim):
-                            translations[j] = np.mod(translations[j] + t, 1)
+                            translations[j] = np.mod(translations[j] @ prim_cell @ np.linalg.inv(cell) + t, 1)
 
             # The original unit cell is primitive
             else:
