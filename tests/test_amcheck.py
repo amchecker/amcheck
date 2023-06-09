@@ -97,3 +97,54 @@ def test_is_altermagnet():
     am = is_altermagnet(symops, positions, equiv_atoms, chem_symbols,
                         spins)
     assert am == True
+
+def test_non_primitive():
+    symops = [(np.array([[ 1,  0,  0,], [ 0,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0,  0.0,  0.00])),
+              (np.array([[-1,  0,  0,], [ 0, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0,  0.0,  0.00])), 
+              (np.array([[-1,  0,  0,], [ 0, -1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0,  0.0,  0.00])),
+              (np.array([[ 1,  0,  0,], [ 0,  1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0,  0.0,  0.00])),
+              (np.array([[ 1,  0,  0,], [ 0, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.5,  0.5,  0.25])),
+              (np.array([[-1,  0,  0,], [ 0,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.5,  0.5,  0.25])),
+              (np.array([[-1,  0,  0,], [ 0,  1,  0], [ 0,  0, -1]], dtype=int), np.array([0.5,  0.5,  0.25])),
+              (np.array([[ 1,  0,  0,], [ 0, -1,  0], [ 0,  0,  1]], dtype=int), np.array([0.5,  0.5,  0.25])),
+              (np.array([[ 1,  0,  0,], [ 0,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0,  0.0,  0.50])),
+              (np.array([[-1,  0,  0,], [ 0, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0,  0.0,  0.50])),
+              (np.array([[-1,  0,  0,], [ 0, -1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0,  0.0,  0.50])),
+              (np.array([[ 1,  0,  0,], [ 0,  1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0,  0.0,  0.50])),
+              (np.array([[ 1,  0,  0,], [ 0, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.5,  0.5,  0.75])),
+              (np.array([[-1,  0,  0,], [ 0,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.5,  0.5,  0.75])),
+              (np.array([[-1,  0,  0,], [ 0,  1,  0], [ 0,  0, -1]], dtype=int), np.array([0.5,  0.5,  0.75])),
+              (np.array([[ 1,  0,  0,], [ 0, -1,  0], [ 0,  0,  1]], dtype=int), np.array([0.5,  0.5,  0.75]))]
+
+    positions = np.array([[0.00000000, 0.00000000, 0.00],
+                          [0.00000000, 0.00000000, 0.50],
+                          [0.50000000, 0.50000000, 0.25],
+                          [0.50000000, 0.50000000, 0.75],
+                          [0.18850000, 0.35609999, 0.00],
+                          [0.18850000, 0.35609999, 0.50],
+                          [0.81150001, 0.64389998, 0.00],
+                          [0.81150001, 0.64389998, 0.50],
+                          [0.31150001, 0.85610002, 0.25],
+                          [0.31150001, 0.85610002, 0.75],
+                          [0.68849999, 0.14390001, 0.25],
+                          [0.68849999, 0.14390001, 0.75]])
+
+    equiv_atoms  = [0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4]
+    chem_symbols = ["Fe", "Fe", "Fe", "Fe", "Sb", "Sb", "Sb", "Sb", "Sb", "Sb", "Sb", "Sb"]
+
+    spins = ['u', 'u', 'd', 'd', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n']
+    am = is_altermagnet(symops, positions, equiv_atoms, chem_symbols,
+                        spins)
+    assert am == True
+
+    spins = ['u', 'd', 'u', 'd', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n']
+    afm = is_altermagnet(symops, positions, equiv_atoms, chem_symbols,
+                        spins)
+
+    assert afm == False
+
+    spins = ['u', 'd', 'd', 'u', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n']
+    afm = is_altermagnet(symops, positions, equiv_atoms, chem_symbols,
+                        spins)
+
+    assert afm == False
