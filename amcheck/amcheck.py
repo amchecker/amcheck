@@ -575,8 +575,10 @@ definition!")
         except Exception as error:
             eprint("[ERROR] " + str(error))
 
+def cli(args=None):
+    if not args:
+        args = sys.argv[1:]
 
-if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog='amcheck.py',
         description='Checks if a given structure is an altermagnet.')
@@ -601,3 +603,6 @@ if __name__ == "__main__":
         main_ahc_type(args)
     else:
         main(args)
+
+if __name__ == "__main__":
+    cli()
