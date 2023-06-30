@@ -335,6 +335,83 @@ def input_spins(num_atoms):
 
     return spins
 
+def label_matrix(m, tol=1e-3):
+    """
+    Obtain a symbolic representation of a given numeric matrix.
+
+    The goal is to label the entries of the matrix, i.e. the conductivity
+    tensor, in the way that the number of labels is the same as the number
+    of independent components.
+    For example, the matrix [[1,0,0],[0,1,0],[0,0,2]] is represented by
+    [["σxx", 0, 0],[0, "σxx", 0], [0, 0, "σzz"]].
+
+    Parameters
+    ----------
+    m : 3x3 matrix
+        Input 3x3 matrix to find a symbolic representation for.
+    tol : float
+        A tolerance parameter for numerical computations.
+    Returns
+    -------
+    s : 3x3 matrix of strings
+        Symbolic matrix with labels obtained from a given matrix.
+    """
+
+    dictionary = "σxx", "σyy", "σzz", "σyz", "σxz", "σxy", "σzy", "σzx", "σyx"
+    ids = [(0,0), (1,1), (2,2), (1,2), (0,2), (0,1), (2,1), (2,0), (1,0)]
+
+    s = np.matrix([["0", "0", "0"],["0", "0", "0"],["0", "0", "0"]], dtype='<U4')
+    s[0, 0] = "σxx"
+
+    for i in range(9):
+        for j in range(i+1):
+            if abs(m[ids[i]]) > tol:
+                if abs(m[ids[i]] - m[ids[j]]) < tol:
+                    s[ids[i]] = s[ids[j]]
+                    break
+                elif abs(abs(m[ids[i]]) - abs(m[ids[j]])) < tol:
+                    s[ids[i]] = "-"+s[ids[j]]
+                    break
+                else:
+                    s[ids[i]] = dictionary[i]
+            else:
+                s[ids[i]] = "0"
+    return s
+
+
+def symmetrized_conductivity_tensor(rotations, time_reversals):
+    """
+    Return a symmetrized conductivity tensor w.r.t given symmetries.
+
+    Parameters
+    ----------
+    rotations : list of 3x3 matrices
+        List of 3x3 matrices that contain symmetry operations.
+    time_reversals : list of booleans
+        Each entry defines if the rotation in `rotations` list is a symmetry
+        or antisymmetry operation.
+
+    Returns
+    -------
+    S : 3x3 matrix
+        A symmetrized conductivity tensor.
+        Entries are numbers, use `label_matrix` function to get symbolic
+        representation.
+    """
+    # a seed matrix to be symmetrized: each entry has a different order of
+    # magnitude to avoid accidental degeneracies
+    seed   = np.matrix([[1e0, 1e1, 1e2], [1e3, 1e4, 1e5], [1e6, 1e7, 1e8]])
+    seed_T = np.transpose(seed)
+
+    S = np.zeros((3,3))
+    for (R, T) in zip(rotations, time_reversals):
+        if T:
+            S += np.linalg.inv(R) @ seed_T @ R
+        else:
+            S += np.linalg.inv(R) @ seed   @ R
+
+    return S
+
 
 def main(args):
     """ Run altermagnet/antiferromagnet structure analysis interactively. """
@@ -521,7 +598,7 @@ def main_ahc_type(args):
     for a given structure.
     """
 
-    import ahc_data
+#    import ahc_data
 
     for filename in args.file:
         try:
@@ -567,7 +644,27 @@ definition!")
             print("Magnetic Space Group:",
                   spglib.get_magnetic_spacegroup_type(MSG['uni_number']))
             print()
-            print(ahc_data.ahc_types[ahc_data.get_ahc_type(MSG['uni_number'])])
+#            print(ahc_data.ahc_types[ahc_data.get_ahc_type(MSG['uni_number'])])
+            symmetries = spglib.get_magnetic_symmetry(spglib_cell, symprec=args.symprec,
+                    angle_tolerance=-1.0, mag_symprec=args.mag_symprec,
+                    is_axial=True, with_time_reversal=True)
+
+            T = np.transpose(atoms.cell)
+            rotations = [T @ R @ np.linalg.inv(T) for R in symmetries['rotations']]
+            time_reversals = symmetries['time_reversals']
+
+            S = symmetrized_conductivity_tensor(rotations, time_reversals)
+            print("Conductivity tensor:")
+            print(label_matrix(S))
+            print()
+
+            Sa = label_matrix((S - np.transpose(S))/2)
+            print("Antisymmetric part of conductivity tensor (Anomalous Hall Effect):")
+            print(Sa)
+            print()
+
+            print("Hall vector:")
+            print([Sa[2,1], Sa[0,2], Sa[1,0]])
 
         except ase.io.formats.UnknownFileTypeError as error:
             eprint("[ERROR] " + "ASE: unknown file type ({})".format(str(error)))

@@ -2,8 +2,12 @@ from amcheck import __version__
 
 from amcheck import check_altermagnetism_orbit
 from amcheck import is_altermagnet
+from amcheck import label_matrix
+from amcheck import symmetrized_conductivity_tensor
 
+from math import pi, cos, sin
 import numpy as np
+
 
 
 def test_version():
@@ -148,3 +152,181 @@ def test_non_primitive():
                         spins)
 
     assert afm == False
+
+
+def test_label_matrix():
+    # 1.1.1
+    S = label_matrix(np.matrix([[11,12,13],[21,22,23],[31,32,33]]))
+    ethalon = np.matrix([["σxx","σxy","σxz"], ["σyx","σyy","σyz"], ["σzx","σzy","σzz"]])
+    assert (S==ethalon).all()
+
+    # 1.2.2
+    S = label_matrix(np.matrix([[11,12,13],[12,22,23],[13,23,33]]))
+    ethalon = np.matrix([["σxx","σxy","σxz"], ["σxy","σyy","σyz"], ["σxz","σyz","σzz"]])
+    assert (S==ethalon).all()
+
+    # 3.1.6
+    S = label_matrix(np.matrix([[11,0,13], [0,22,0], [31,0,33]]))
+    ethalon = np.matrix([["σxx","0","σxz"], ["0","σyy","0"], ["σzx","0","σzz"]])
+    assert (S==ethalon).all()
+
+    # 3.3.8
+    S = label_matrix(np.matrix([[ 11, 12,13], [-12, 22,23], [ 13,-23,33]]))
+    ethalon = np.matrix([["σxx", "σxy","σxz"], ["-σxy", "σyy","σyz"], ["σxz","-σyz","σzz"]])
+    assert (S==ethalon).all()
+
+    # 4.2.10
+    S = label_matrix(np.matrix([[11,0,13], [0,22,0], [13,0,33]]))
+    ethalon = np.matrix([["σxx","0","σxz"], ["0","σyy","0"], ["σxz","0","σzz"]])
+    assert (S==ethalon).all()
+
+    # 6.1.17
+    S = label_matrix(np.matrix([[11,0,0], [0,22,0], [0,0,33]]))
+    ethalon = np.matrix([["σxx","0","0"], ["0","σyy","0"], ["0","0","σzz"]])
+    assert (S==ethalon).all()
+
+    # 6.3.19
+    S = label_matrix(np.matrix([[11,12,0], [-12,22,0], [0,0,33]]))
+    ethalon = np.matrix([["σxx","σxy","0"], ["-σxy","σyy","0"], ["0","0","σzz"]])
+    assert (S==ethalon).all()
+
+    # 7.3.22
+    S = label_matrix(np.matrix([[11,0,13], [0,22,0], [-13,0,33]]))
+    ethalon = np.matrix([["σxx","0","σxz"], ["0","σyy","0"], ["-σxz","0","σzz"]])
+    assert (S==ethalon).all()
+
+    # 9.2.30
+    S = label_matrix(np.matrix([[11,0,0], [0,11,0], [0,0,33]]))
+    ethalon = np.matrix([["σxx","0","0"], ["0","σxx","0"], ["0","0","σzz"]])
+    assert (S==ethalon).all()
+
+    # 28.1.107
+    S = label_matrix(np.matrix([[11,0,0], [0,11,0], [0,0,11]]))
+    ethalon = np.matrix([["σxx","0","0"], ["0","σxx","0"], ["0","0","σxx"]])
+    assert (S==ethalon).all()
+
+def test_symmetrized_conductivity_tensor():
+    # 1.1.1
+    rotations = [np.matrix([[1,0,0],[0,1,0],[0,0,1]])]
+    time_reversals = [False]
+    S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
+    ethalon = np.matrix([["σxx","σxy","σxz"], ["σyx","σyy","σyz"], ["σzx","σzy","σzz"]])
+    assert (S==ethalon).all()
+
+    # 1.2.2
+    rotations = [np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
+                 np.matrix([[1,0,0],[0,1,0],[0,0,1]])]
+    time_reversals = [False, True]
+    S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
+    ethalon = np.matrix([["σxx","σxy","σxz"], ["σxy","σyy","σyz"], ["σxz","σyz","σzz"]], dtype='<U4')
+    assert (S==ethalon).all()
+
+    # 3.1.6
+    rotations = [np.matrix([[ 1,0,0],[0,1,0],[0,0, 1]]),
+                 np.matrix([[-1,0,0],[0,1,0],[0,0,-1]])]
+    time_reversals = [False, False]
+    S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
+    ethalon = np.matrix([["σxx","0","σxz"], ["0","σyy","0"], ["σzx","0","σzz"]])
+    assert (S==ethalon).all()
+
+    # 3.3.8
+    rotations = [np.matrix([[ 1,0,0],[0,1,0],[0,0,1]]),
+                 np.matrix([[-1,0,0],[0,1,0],[0,0,-1]])]
+    time_reversals = [False, True]
+    S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
+    ethalon = np.matrix([["σxx", "σxy","σxz"], ["-σxy", "σyy","σyz"], ["σxz","-σyz","σzz"]])
+    assert (S==ethalon).all()
+
+    # 4.2.10
+    rotations = [np.matrix([[ 1, 0, 0],[ 0, 1, 0],[ 0, 0, 1]]),
+                 np.matrix([[ 1, 0, 0],[ 0,-1, 0],[ 0, 0, 1]]),
+                 np.matrix([[ 1, 0, 0],[ 0, 1, 0],[ 0, 0, 1]]),
+                 np.matrix([[ 1, 0, 0],[ 0,-1, 0],[ 0, 0, 1]])]
+    time_reversals = [False, False, True, True]
+    S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
+    ethalon = np.matrix([["σxx","0","σxz"], ["0","σyy","0"], ["σxz","0","σzz"]])
+    assert (S==ethalon).all()
+
+    # 6.1.17
+    rotations = [np.matrix([[ 1, 0, 0],[ 0, 1, 0],[ 0, 0, 1]]),
+                 np.matrix([[ 1, 0, 0],[ 0,-1, 0],[ 0, 0,-1]]),
+                 np.matrix([[-1, 0, 0],[ 0, 1, 0],[ 0, 0,-1]]),
+                 np.matrix([[-1, 0, 0],[ 0,-1, 0],[ 0, 0, 1]])]
+    time_reversals = [False, False, False, False]
+    S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
+    ethalon = np.matrix([["σxx","0","0"], ["0","σyy","0"], ["0","0","σzz"]])
+    assert (S==ethalon).all()
+
+    # 6.3.19
+    rotations = [np.matrix([[ 1, 0, 0],[ 0, 1, 0],[ 0, 0, 1]]),
+                 np.matrix([[-1, 0, 0],[ 0,-1, 0],[ 0, 0, 1]]),
+                 np.matrix([[ 1, 0, 0],[ 0,-1, 0],[ 0, 0,-1]]),
+                 np.matrix([[-1, 0, 0],[ 0, 1, 0],[ 0, 0,-1]])]
+    time_reversals = [False, False, True, True]
+    S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
+    ethalon = np.matrix([["σxx","σxy","0"], ["-σxy","σyy","0"], ["0","0","σzz"]])
+    assert (S==ethalon).all()
+
+    # 7.3.22
+    rotations = [np.matrix([[ 1, 0, 0],[ 0, 1, 0],[ 0, 0, 1]]),
+                 np.matrix([[ 1, 0, 0],[ 0,-1, 0],[ 0, 0, 1]]),
+                 np.matrix([[-1, 0, 0],[ 0,-1, 0],[ 0, 0, 1]]),
+                 np.matrix([[-1, 0, 0],[ 0, 1, 0],[ 0, 0, 1]])]
+    time_reversals = [False, False, True, True]
+    S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
+    ethalon = np.matrix([["σxx","0","σxz"], ["0","σyy","0"], ["-σxz","0","σzz"]])
+    assert (S==ethalon).all()
+
+    # 9.2.30
+    rotations = [np.matrix([[ 1, 0, 0],[ 0, 1, 0],[ 0, 0, 1]]),
+                 np.matrix([[-1, 0, 0],[ 0,-1, 0],[ 0, 0, 1]]),
+                 np.matrix([[ 0,-1, 0],[ 1, 0, 0],[ 0, 0, 1]]),
+                 np.matrix([[ 0, 1, 0],[-1, 0, 0],[ 0, 0, 1]]),
+                 np.matrix([[ 1, 0, 0],[ 0, 1, 0],[ 0, 0, 1]]),
+                 np.matrix([[-1, 0, 0],[ 0,-1, 0],[ 0, 0, 1]]),
+                 np.matrix([[ 0,-1, 0],[ 1, 0, 0],[ 0, 0, 1]]),
+                 np.matrix([[ 0, 1, 0],[-1, 0, 0],[ 0, 0, 1]])]
+    time_reversals = [False, False, False, False, True, True, True, True]
+    S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
+    ethalon = np.matrix([["σxx","0","0"], ["0","σxx","0"], ["0","0","σzz"]])
+    assert (S==ethalon).all()
+
+    # 28.1.107
+    rotations = [np.matrix([[ 1, 0, 0],[ 0, 1, 0],[ 0, 0, 1]]),
+                 np.matrix([[ 1, 0, 0],[ 0,-1, 0],[ 0, 0,-1]]), # 2x
+                 np.matrix([[-1, 0, 0],[ 0, 1, 0],[ 0, 0,-1]]), # 2y
+                 np.matrix([[-1, 0, 0],[ 0,-1, 0],[ 0, 0, 1]]), # 2z
+                 np.matrix([[ 0, 1, 0],[ 0, 0, 1],[ 1, 0, 0]]),
+                 np.matrix([[ 0, 1, 0],[ 0, 0,-1],[-1, 0, 0]]),
+                 np.matrix([[ 0,-1, 0],[ 0, 0, 1],[-1, 0, 0]]),
+                 np.matrix([[ 0,-1, 0],[ 0, 0,-1],[ 1, 0, 0]]),
+                 np.matrix([[ 0, 0, 1],[ 1, 0, 0],[ 0, 1, 0]]),
+                 np.matrix([[ 0, 0, 1],[-1, 0, 0],[ 0,-1, 0]]),
+                 np.matrix([[ 0, 0,-1],[ 1, 0, 0],[ 0,-1, 0]]),
+                 np.matrix([[ 0, 0,-1],[-1, 0, 0],[ 0, 1, 0]])]
+    time_reversals = [False]*12
+    S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
+    ethalon = np.matrix([["σxx","0","0"], ["0","σxx","0"], ["0","0","σxx"]])
+    assert (S==ethalon).all()
+
+    # 16.1.60
+    a = 2*pi/3
+    rotations = [np.matrix([[ 1, 0, 0],[ 0, 1, 0],[ 0, 0, 1]]),
+                 np.matrix([[cos( a), -sin( a), 0],[sin( a), cos( a), 0],[0,0,1]]),
+                 np.matrix([[cos(-a), -sin(-a), 0],[sin(-a), cos(-a), 0],[0,0,1]])]
+    time_reversals = [False]*3
+    S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
+    ethalon = np.matrix([["σxx","σxy","0"], ["-σxy","σxx","0"], ["0","0","σzz"]])
+    assert (S==ethalon).all()
+
+    # 16.1.61
+    rotations = [np.matrix([[ 1, 0, 0],[ 0, 1, 0],[ 0, 0, 1]]),
+                 np.matrix([[cos( a), -sin( a), 0],[sin( a), cos( a), 0],[0,0,1]]),
+                 np.matrix([[cos(-a), -sin(-a), 0],[sin(-a), cos(-a), 0],[0,0,1]]),
+                 np.matrix([[ 1, 0, 0],[ 0, 1, 0],[ 0, 0, 1]]),
+                 np.matrix([[cos( a), -sin( a), 0],[sin( a), cos( a), 0],[0,0,1]]),
+                 np.matrix([[cos(-a), -sin(-a), 0],[sin(-a), cos(-a), 0],[0,0,1]])]
+    time_reversals = [False]*3+[True]*3
+    S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
+    ethalon = np.matrix([["σxx","0","0"], ["0","σxx","0"], ["0","0","σzz"]])
+    assert (S==ethalon).all()
