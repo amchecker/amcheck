@@ -571,6 +571,7 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
                     print(i+1, "({})".format(j), p)
 
                 if len(positions) == 1:
+                    spins.append(['n'])
                     print("Only one atom in the orbit: skipping.")
                     continue
 
