@@ -49,7 +49,7 @@ def eprint(*args, **kwargs):
 
 
 def check_altermagnetism_orbit(symops, positions, spins, tol=DEFAULT_TOLERANCE,
-                               verbose=False):
+                               verbose=False, silent=True):
     """
     Check if a given Wyckoff orbit with a given spins is altermagnetic.
 
@@ -69,6 +69,8 @@ def check_altermagnetism_orbit(symops, positions, spins, tol=DEFAULT_TOLERANCE,
         A tolerance parameter for numerical computations.
     verbose : Bool
         Print some additional information during the execution.
+    silent : Bool
+        Supress any print instructions if True.
 
     Returns
     -------
@@ -143,7 +145,7 @@ number of spin designation: got {} and {} instead!".format(len(positions),
                         # midpoint
                         is_in_IT_related_pair[i] = 1
                         is_in_IT_related_pair[j] = 1
-                        if verbose:
+                        if not silent and verbose:
                             print("Atoms {} and {} are related by inversion (midpoint {}).".format(i+1,
                                                                                                    j+1, midpoint))
 
@@ -159,17 +161,17 @@ number of spin designation: got {} and {} instead!".format(len(positions),
                         # atoms i and j are related by translation
                         is_in_IT_related_pair[i] = 1
                         is_in_IT_related_pair[j] = 1
-                        if verbose:
+                        if not silent and verbose:
                             print("Atoms {} and {} are related by translation {}.".format(
                                 i+1, j+1, t))
 
-    if verbose:
+    if not silent and verbose:
         print("Atoms related by inversion/translation (1-yes, 0-no):", is_in_IT_related_pair)
-    if verbose:
+    if not silent and verbose:
         print("Atoms related by some symmetry (1-yes, 0-no):", is_in_sym_related_pair)
 
     is_Luttinger_ferrimagnet = abs(np.sum(is_in_sym_related_pair)-len(positions)) > tol
-    if verbose:
+    if not silent and verbose:
         if is_Luttinger_ferrimagnet:
             print("Up and down sublattices are not related by any symmetry: the material is Luttinger ferrimagnet")
 
@@ -184,7 +186,7 @@ number of spin designation: got {} and {} instead!".format(len(positions),
 
 
 def is_altermagnet(symops, atom_positions, equiv_atoms, chemical_symbols, spins,
-                   tol=DEFAULT_TOLERANCE, verbose=False):
+                   tol=DEFAULT_TOLERANCE, verbose=False, silent=True):
     """ 
     Check if a given structure is altermagnetic.
 
@@ -212,6 +214,8 @@ def is_altermagnet(symops, atom_positions, equiv_atoms, chemical_symbols, spins,
         A tolerance parameter for numerical computations.
     verbose : Bool
         Print some additional information during the execution.
+    silent : Bool
+        Supress any print instructions if True.
 
     Returns
     -------
@@ -241,19 +245,21 @@ def is_altermagnet(symops, atom_positions, equiv_atoms, chemical_symbols, spins,
         atom_ids = np.where(equiv_atoms == u)[0]
         orbit_positions = atom_positions[atom_ids]
 
-        if verbose:
+        if not silent and verbose:
             print()
             print("Orbit of {} atoms:".format(chemical_symbols[atom_ids[0]]))
 
         if len(orbit_positions) == 1:
-            print("Only one atom in the orbit: skipping.")
+            if not silent:
+                print("Only one atom in the orbit: skipping.")
             continue
 
         orbit_spins = [spins[i] for i in atom_ids]
 
         # skip if the Wyckoff orbit consists of non-magnetic atoms
         if all(s == "n" for s in orbit_spins):
-            print(
+            if not silent:
+                print(
                 "Group of non-magnetic atoms ({}): skipping.".format(chemical_symbols[u]))
             continue
 
@@ -269,9 +275,9 @@ def is_altermagnet(symops, atom_positions, equiv_atoms, chemical_symbols, spins,
         # in the way that we never reach the next line, we need to report it
         check_was_performed = True
         is_orbit_altermagnetic = check_altermagnetism_orbit(symops,
-                                                            orbit_positions, orbit_spins, tol, verbose)
+                                                            orbit_positions, orbit_spins, tol, verbose, silent)
         altermagnet |= is_orbit_altermagnetic
-        if verbose:
+        if not silent and verbose:
             print("Altermagnetic orbit ({})?".format(chemical_symbols[u]),
                   is_orbit_altermagnetic)
 
@@ -581,7 +587,7 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
             spins = [s for sublist in spins for s in sublist]  # flatten
             is_am = is_altermagnet(symops, atoms.get_scaled_positions(),
                                    equiv_atoms, chemical_symbols, spins,
-                                   args.tol, args.verbose)
+                                   args.tol, args.verbose, False)
 
             print()
             print("Altermagnet?", is_am)
