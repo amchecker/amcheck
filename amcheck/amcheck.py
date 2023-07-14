@@ -366,7 +366,7 @@ def label_matrix(m, tol=1e-3):
     dictionary = "σxx", "σyy", "σzz", "σyz", "σxz", "σxy", "σzy", "σzx", "σyx"
     ids = [(0,0), (1,1), (2,2), (1,2), (0,2), (0,1), (2,1), (2,0), (1,0)]
 
-    s = np.matrix([["0", "0", "0"],["0", "0", "0"],["0", "0", "0"]], dtype='<U4')
+    s = np.array([["0", "0", "0"],["0", "0", "0"],["0", "0", "0"]], dtype='<U4')
     s[0, 0] = "σxx"
 
     for i in range(9):
@@ -406,7 +406,7 @@ def symmetrized_conductivity_tensor(rotations, time_reversals):
     """
     # a seed matrix to be symmetrized: each entry has a different order of
     # magnitude to avoid accidental degeneracies
-    seed   = np.matrix([[1e0, 1e1, 1e2], [1e3, 1e4, 1e5], [1e6, 1e7, 1e8]])
+    seed   = np.array([[1e0, 1e1, 1e2], [1e3, 1e4, 1e5], [1e6, 1e7, 1e8]])
     seed_T = np.transpose(seed)
 
     S = np.zeros((3,3))
@@ -506,7 +506,7 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
                     # All of them can be enumerated using the Hermite Normal
                     # Form, H.
                     H, _, _ = lllhermite(T)
-                    H = np.matrix(H, dtype=int)
+                    H = np.array(H, dtype=int)
                     if args.verbose:
                         print("HNF of T:")
                         print(H)
