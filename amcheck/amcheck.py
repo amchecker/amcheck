@@ -566,7 +566,7 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
 
             # get spins as an input from user
             chemical_symbols = atoms.get_chemical_symbols()
-            spins = []
+            spins = ['n' for i in range(len(chemical_symbols))]
             for u in np.unique(equiv_atoms):
                 atom_ids = np.where(equiv_atoms == u)[0]
                 positions = atoms.get_scaled_positions()[atom_ids]
@@ -577,14 +577,13 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
                     print(i+1, "({})".format(j), p)
 
                 if len(positions) == 1:
-                    spins.append(['n'])
                     print("Only one atom in the orbit: skipping.")
                     continue
 
                 orbit_spins = input_spins(len(positions))
-                spins.append(orbit_spins)
+                for i in range(len(orbit_spins)):
+                    spins[atom_ids[i]] = orbit_spins[i]
 
-            spins = [s for sublist in spins for s in sublist]  # flatten
             is_am = is_altermagnet(symops, atoms.get_scaled_positions(),
                                    equiv_atoms, chemical_symbols, spins,
                                    args.tol, args.verbose, False)
