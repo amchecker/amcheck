@@ -84,6 +84,9 @@ def check_altermagnetism_orbit(symops, positions, spins, tol=DEFAULT_TOLERANCE,
         If len(positions) != len(spins)
     """
 
+    # if orbit has multiplicity 1, it cannot be altermagnetic
+    if len(positions) == 1: return False
+
     if len(positions) != len(spins):
         raise ValueError("Number of atomic positions should be the same as \
 number of spin designation: got {} and {} instead!".format(len(positions),
@@ -241,6 +244,7 @@ def is_altermagnet(symops, atom_positions, equiv_atoms, chemical_symbols, spins,
 
     altermagnet = False
     check_was_performed = False
+    all_orbits_multiplicity_one = True
     for u in np.unique(equiv_atoms):
         atom_ids = np.where(equiv_atoms == u)[0]
         orbit_positions = atom_positions[atom_ids]
@@ -249,6 +253,8 @@ def is_altermagnet(symops, atom_positions, equiv_atoms, chemical_symbols, spins,
             print()
             print("Orbit of {} atoms:".format(chemical_symbols[atom_ids[0]]))
 
+        all_orbits_multiplicity_one = all_orbits_multiplicity_one \
+                                      and (len(orbit_positions) == 1)
         if len(orbit_positions) == 1:
             if not silent:
                 print("Only one atom in the orbit: skipping.")
@@ -282,7 +288,13 @@ def is_altermagnet(symops, atom_positions, equiv_atoms, chemical_symbols, spins,
                   is_orbit_altermagnetic)
 
     if not check_was_performed:
-        raise RuntimeError("Something is wrong with the description of magnetic atoms!\n\
+        if all_orbits_multiplicity_one:
+            altermagnet = False
+            if not silent:
+                print("Note: in this structure all orbits have multiplicity one.\n\
+This material can only be a Luttinger ferrimagnet.")
+        else:
+            raise RuntimeError("Something is wrong with the description of magnetic atoms!\n\
 Have you provided a non-magnetic/ferromagnetic material?")
 
     return altermagnet
