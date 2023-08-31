@@ -98,7 +98,12 @@ number of spin designation: got {} and {} instead!".format(len(positions),
     if not symops:
         return True
 
+    # "normalize" spin designations to lowercase for an easier bookkeeping
+    spins = [s.lower() for s in spins]
+
     is_altermagnet = False
+
+    N_magnetic_atoms = 2*spins.count("u")
 
     is_in_sym_related_pair = np.zeros(len(positions))
     is_in_IT_related_pair  = np.zeros(len(positions))
@@ -173,7 +178,7 @@ number of spin designation: got {} and {} instead!".format(len(positions),
     if not silent and verbose:
         print("Atoms related by some symmetry (1-yes, 0-no):", is_in_sym_related_pair)
 
-    is_Luttinger_ferrimagnet = abs(np.sum(is_in_sym_related_pair)-len(positions)) > tol
+    is_Luttinger_ferrimagnet = abs(np.sum(is_in_sym_related_pair)-N_magnetic_atoms) > tol
     if not silent and verbose:
         if is_Luttinger_ferrimagnet:
             print("Up and down sublattices are not related by any symmetry: the material is Luttinger ferrimagnet")
@@ -182,7 +187,7 @@ number of spin designation: got {} and {} instead!".format(len(positions),
     # to some pair of opposite spins that either has an inversion at its
     # midpoint or are related by a translation.
     # Otherwise it's an altermagnet.
-    is_altermagnet = abs(np.sum(is_in_IT_related_pair)-len(positions)) > tol
+    is_altermagnet = abs(np.sum(is_in_IT_related_pair)-N_magnetic_atoms) > tol
     is_altermagnet &= not is_Luttinger_ferrimagnet
 
     return is_altermagnet
