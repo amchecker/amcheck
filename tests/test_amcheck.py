@@ -102,6 +102,56 @@ def test_is_altermagnet():
                         spins)
     assert am == True
 
+
+def test_NiAs_structure():
+    symops = [(np.array([[ 1,  0,  0], [ 0,  1,  0], [ 0,  0,  1]], dtype=int), np.array( [0., 0., 0.])),
+              (np.array([[-1,  0,  0], [ 0, -1,  0], [ 0,  0, -1]], dtype=int), np.array( [0., 0., 0.])),
+              (np.array([[ 1, -1,  0], [ 1,  0,  0], [ 0,  0,  1]], dtype=int), np.array( [0., 0., 0.5])),
+              (np.array([[-1,  1,  0], [-1,  0,  0], [ 0,  0, -1]], dtype=int), np.array( [0., 0., 0.5])),
+              (np.array([[ 0, -1,  0], [ 1, -1,  0], [ 0,  0,  1]], dtype=int), np.array( [0., 0., 0.])),
+              (np.array([[ 0,  1,  0], [-1,  1,  0], [ 0,  0, -1]], dtype=int), np.array( [0., 0., 0.])),
+              (np.array([[-1,  0,  0], [ 0, -1,  0], [ 0,  0,  1]], dtype=int), np.array( [0., 0., 0.5])),
+              (np.array([[ 1,  0,  0], [ 0,  1,  0], [ 0,  0, -1]], dtype=int), np.array( [0., 0., 0.5])),
+              (np.array([[-1,  1,  0], [-1,  0,  0], [ 0,  0,  1]], dtype=int), np.array( [0., 0., 0.])),
+              (np.array([[ 1, -1,  0], [ 1,  0,  0], [ 0,  0, -1]], dtype=int), np.array( [0., 0., 0.])),
+              (np.array([[ 0,  1,  0], [-1,  1,  0], [ 0,  0,  1]], dtype=int), np.array( [0., 0., 0.5])),
+              (np.array([[ 0, -1,  0], [ 1, -1,  0], [ 0,  0, -1]], dtype=int), np.array( [0., 0., 0.5])),
+              (np.array([[ 0, -1,  0], [-1,  0,  0], [ 0,  0, -1]], dtype=int), np.array( [0., 0., 0.5])),
+              (np.array([[ 0,  1,  0], [ 1,  0,  0], [ 0,  0,  1]], dtype=int), np.array( [0., 0., 0.5])),
+              (np.array([[-1,  0,  0], [-1,  1,  0], [ 0,  0, -1]], dtype=int), np.array( [0., 0., 0.])),
+              (np.array([[ 1,  0,  0], [ 1, -1,  0], [ 0,  0,  1]], dtype=int), np.array( [0., 0., 0.])),
+              (np.array([[-1,  1,  0], [ 0,  1,  0], [ 0,  0, -1]], dtype=int), np.array( [0., 0., 0.5])),
+              (np.array([[ 1, -1,  0], [ 0, -1,  0], [ 0,  0,  1]], dtype=int), np.array( [0., 0., 0.5])),
+              (np.array([[ 0,  1,  0], [ 1,  0,  0], [ 0,  0, -1]], dtype=int), np.array( [0., 0., 0.])),
+              (np.array([[ 0, -1,  0], [-1,  0,  0], [ 0,  0,  1]], dtype=int), np.array( [0., 0., 0.])),
+              (np.array([[ 1,  0,  0], [ 1, -1,  0], [ 0,  0, -1]], dtype=int), np.array( [0., 0., 0.5])),
+              (np.array([[-1,  0,  0], [-1,  1,  0], [ 0,  0,  1]], dtype=int), np.array( [0., 0., 0.5])),
+              (np.array([[ 1, -1,  0], [ 0, -1,  0], [ 0,  0, -1]], dtype=int), np.array( [0., 0., 0.])),
+              (np.array([[-1,  1,  0], [ 0,  1,  0], [ 0,  0,  1]], dtype=int), np.array( [0., 0., 0.]))]
+
+    positions = np.array([[0.00, 0.00, 0.00],
+                          [0.00, 0.00, 0.50],
+                          [1/3., 2/3., 0.25],
+                          [2/3., 1/3., 0.75]])
+
+    equiv_atoms  = [0, 0, 1, 1]
+    chem_symbols = ["Ni", "Ni", "As", "As"]
+
+    # high-pressure FeO: Fe at As positions, O at Ni positions => afm
+    spins = ["n", "n", "u", "d"]
+    hp_FeO = is_altermagnet(symops, positions, equiv_atoms, chem_symbols,
+                        spins)
+
+    assert hp_FeO == False
+
+    # MnTe: Mn at Ni positions, Te at As positions => am
+    spins = ["u", "d", "n", "n"]
+    MnTe = is_altermagnet(symops, positions, equiv_atoms, chem_symbols,
+                        spins)
+
+    assert MnTe == True
+
+
 def test_non_primitive():
     symops = [(np.array([[ 1,  0,  0,], [ 0,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0,  0.0,  0.00])),
               (np.array([[-1,  0,  0,], [ 0, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0,  0.0,  0.00])), 
