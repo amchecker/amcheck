@@ -92,14 +92,44 @@ def check_altermagnetism_orbit(symops, positions, spins, tol=DEFAULT_TOLERANCE,
 number of spin designation: got {} and {} instead!".format(len(positions),
                                                            len(spins)))
 
-    # if symops list is empty, the spacegroup is definitely centrosymmetric,
-    # thus the orbit is altermagnetic (this check is relevant if only
-    # "altermagnetic" symmetry operations are provided)
-    if not symops:
-        return True
-
     # "normalize" spin designations to lowercase for an easier bookkeeping
     spins = [s.lower() for s in spins]
+
+    # for a given spin determine antisymmetry operators among the space group
+    # operators
+    magn_symops_filter = np.full(len(symops), True)
+    for i in range(len(positions)):
+        for (si,symop) in enumerate(symops):
+            symop_is_present = False
+            R, t = symop
+
+            for j in range(len(positions)):
+                # we want to check only pairs of up-down spins
+                if not ((spins[i] == "u" and spins[j] == "d") or
+                        (spins[i] == "d" and spins[j] == "u")):
+                    continue
+
+                # check if up and down pair is related by some symmetry
+                dp = np.mod(np.dot(R, positions[i]) + t - positions[j], 1)
+                # a possible issue with numbers close to one
+                for k in range(3):
+                    if abs(1.0-dp[k]) < tol:
+                        dp[k] = 0.0
+
+                if np.linalg.norm(dp) < tol:
+                    symop_is_present |= True
+                    break
+
+            magn_symops_filter[si] &= symop_is_present
+
+
+    magn_symops = [s for (s,is_in_list) in zip(symops, magn_symops_filter)
+                    if is_in_list]
+
+    if not magn_symops:
+        if not silent and verbose:
+            print("Up and down sublattices are not related by any symmetry: the material is Luttinger ferrimagnet")
+        return False
 
     is_altermagnet = False
 
@@ -119,7 +149,7 @@ number of spin designation: got {} and {} instead!".format(len(positions),
 
             midpoint = (positions[i] + positions[j])/2
 
-            for symop in symops:
+            for symop in magn_symops:
                 R, t = symop
 
                 # check if up and down pair is related by some symmetry
