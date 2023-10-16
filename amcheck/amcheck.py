@@ -99,6 +99,10 @@ number of spin designation: got {} and {} instead!".format(len(positions),
     # operators
     magn_symops_filter = np.full(len(symops), True)
     for i in range(len(positions)):
+        # we want to check only pairs of up-down spins
+        if not (spins[i] == "u" or spins[i] == "d"):
+            continue
+
         for (si,symop) in enumerate(symops):
             symop_is_present = False
             R, t = symop
