@@ -39,6 +39,7 @@ import ase.io.vasp
 from ase import Atoms
 import spglib
 
+import amcheck
 
 DEFAULT_TOLERANCE = 1e-3  # tolerance for numeric operations
 
@@ -736,6 +737,8 @@ def cli(args=None):
     parser = argparse.ArgumentParser(
         prog='amcheck.py',
         description='Checks if a given structure is an altermagnet.')
+    parser.add_argument('--version', action='version',
+                        version='%(prog)s {version}'.format(version=amcheck.__version__))
     parser.add_argument('-v', '--verbose', action='store_true',
                         help="verbosely list the information during the execution")
     parser.add_argument('file', nargs='+',
