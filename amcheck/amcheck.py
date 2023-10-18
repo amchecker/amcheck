@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # ********************************************************************************
 # Copyright 2023 Andriy Smolyanyuk, Olivia Taivo, Libor Smejkal, Igor Mazin
 #
