@@ -133,7 +133,7 @@ number of spin designation: got {} and {} instead!".format(len(positions),
 
     if not magn_symops:
         if not silent and verbose:
-            print("Up and down sublattices are not related by any symmetry: the material is Luttinger ferrimagnet")
+            print("Up and down sublattices are not related by symmetry: the material is Luttinger ferrimagnet!")
         return False
 
     is_altermagnet = False
@@ -216,7 +216,7 @@ number of spin designation: got {} and {} instead!".format(len(positions),
     is_Luttinger_ferrimagnet = abs(np.sum(is_in_sym_related_pair)-N_magnetic_atoms) > tol
     if not silent and verbose:
         if is_Luttinger_ferrimagnet:
-            print("Up and down sublattices are not related by any symmetry: the material is Luttinger ferrimagnet")
+            print("Up and down sublattices are not related by symmetry: the material is Luttinger ferrimagnet!")
 
     # This orbit of magnetic atoms will produce an AF if all its atoms belong
     # to some pair of opposite spins that either has an inversion at its
@@ -656,8 +656,6 @@ def main_ahc_type(args):
     for a given structure.
     """
 
-#    import ahc_data
-
     for filename in args.file:
         try:
             print("="*80)
@@ -702,7 +700,6 @@ definition!")
             print("Magnetic Space Group:",
                   spglib.get_magnetic_spacegroup_type(MSG['uni_number']))
             print()
-#            print(ahc_data.ahc_types[ahc_data.get_ahc_type(MSG['uni_number'])])
             symmetries = spglib.get_magnetic_symmetry(spglib_cell, symprec=args.symprec,
                     angle_tolerance=-1.0, mag_symprec=args.mag_symprec,
                     is_axial=True, with_time_reversal=True)
@@ -735,8 +732,8 @@ def cli(args=None):
         args = sys.argv[1:]
 
     parser = argparse.ArgumentParser(
-        prog='amcheck.py',
-        description='Checks if a given structure is an altermagnet.')
+        prog='amcheck',
+        description='A tool to check if a given material is an altermagnet.')
     parser.add_argument('--version', action='version',
                         version='%(prog)s {version}'.format(version=amcheck.__version__))
     parser.add_argument('-v', '--verbose', action='store_true',
@@ -745,14 +742,14 @@ def cli(args=None):
                         help="name of the structure file to analyze")
 
     parser.add_argument('-s', '--symprec', default=DEFAULT_TOLERANCE, type=float,
-                        help="tolerance used by spglib to do the symmetry analysis")
+                        help="tolerance spglib uses during the symmetry analysis")
     parser.add_argument('-ms', '--mag_symprec', default=-1.0, type=float,
-                        help="tolerance for magnetic moments used by spglib for magnetic search")
+                        help="tolerance for magnetic moments spglib uses used during the magnetic symmetry analysis")
     parser.add_argument('-t', '--tol', '--tolerance', default=DEFAULT_TOLERANCE, type=float,
-                        help="tolerance for numerical checks inside of amcheck.py")
+                        help="tolerance for internal numerical checks")
 
     parser.add_argument('--ahc', action='store_true',
-                        help="Determine the possible form of Anomalous Hall Coefficient")
+                        help="determine the possible form of Anomalous Hall Coefficient")
 
     args = parser.parse_args()
 
