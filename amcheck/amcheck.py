@@ -400,7 +400,7 @@ def label_matrix(m, tol=1e-3):
     tensor, in the way that the number of labels is the same as the number
     of independent components.
     For example, the matrix [[1,0,0],[0,1,0],[0,0,2]] is represented by
-    [["σxx", 0, 0],[0, "σxx", 0], [0, 0, "σzz"]].
+    [["xx", 0, 0],[0, "xx", 0], [0, 0, "zz"]].
 
     Parameters
     ----------
@@ -414,11 +414,11 @@ def label_matrix(m, tol=1e-3):
         Symbolic matrix with labels obtained from a given matrix.
     """
 
-    dictionary = "σxx", "σyy", "σzz", "σyz", "σxz", "σxy", "σzy", "σzx", "σyx"
+    dictionary = "xx", "yy", "zz", "yz", "xz", "xy", "zy", "zx", "yx"
     ids = [(0,0), (1,1), (2,2), (1,2), (0,2), (0,1), (2,1), (2,0), (1,0)]
 
     s = np.array([["0", "0", "0"],["0", "0", "0"],["0", "0", "0"]], dtype='<U4')
-    s[0, 0] = "σxx"
+    s[0, 0] = "xx"
 
     for i in range(9):
         for j in range(i+1):
@@ -743,7 +743,7 @@ def cli(args=None):
     parser.add_argument('-s', '--symprec', default=DEFAULT_TOLERANCE, type=float,
                         help="tolerance spglib uses during the symmetry analysis")
     parser.add_argument('-ms', '--mag_symprec', default=-1.0, type=float,
-                        help="tolerance for magnetic moments spglib uses used during the magnetic symmetry analysis")
+                        help="tolerance for magnetic moments spglib uses during the magnetic symmetry analysis")
     parser.add_argument('-t', '--tol', '--tolerance', default=DEFAULT_TOLERANCE, type=float,
                         help="tolerance for internal numerical checks")
 

@@ -267,52 +267,52 @@ def test_non_primitive():
 def test_label_matrix():
     # 1.1.1
     S = label_matrix(np.array([[11,12,13],[21,22,23],[31,32,33]]))
-    ethalon = np.array([["σxx","σxy","σxz"], ["σyx","σyy","σyz"], ["σzx","σzy","σzz"]])
+    ethalon = np.array([["xx","xy","xz"], ["yx","yy","yz"], ["zx","zy","zz"]])
     assert (S==ethalon).all()
 
     # 1.2.2
     S = label_matrix(np.array([[11,12,13],[12,22,23],[13,23,33]]))
-    ethalon = np.array([["σxx","σxy","σxz"], ["σxy","σyy","σyz"], ["σxz","σyz","σzz"]])
+    ethalon = np.array([["xx","xy","xz"], ["xy","yy","yz"], ["xz","yz","zz"]])
     assert (S==ethalon).all()
 
     # 3.1.6
     S = label_matrix(np.array([[11,0,13], [0,22,0], [31,0,33]]))
-    ethalon = np.array([["σxx","0","σxz"], ["0","σyy","0"], ["σzx","0","σzz"]])
+    ethalon = np.array([["xx","0","xz"], ["0","yy","0"], ["zx","0","zz"]])
     assert (S==ethalon).all()
 
     # 3.3.8
     S = label_matrix(np.array([[ 11, 12,13], [-12, 22,23], [ 13,-23,33]]))
-    ethalon = np.array([["σxx", "σxy","σxz"], ["-σxy", "σyy","σyz"], ["σxz","-σyz","σzz"]])
+    ethalon = np.array([["xx", "xy","xz"], ["-xy", "yy","yz"], ["xz","-yz","zz"]])
     assert (S==ethalon).all()
 
     # 4.2.10
     S = label_matrix(np.array([[11,0,13], [0,22,0], [13,0,33]]))
-    ethalon = np.array([["σxx","0","σxz"], ["0","σyy","0"], ["σxz","0","σzz"]])
+    ethalon = np.array([["xx","0","xz"], ["0","yy","0"], ["xz","0","zz"]])
     assert (S==ethalon).all()
 
     # 6.1.17
     S = label_matrix(np.array([[11,0,0], [0,22,0], [0,0,33]]))
-    ethalon = np.array([["σxx","0","0"], ["0","σyy","0"], ["0","0","σzz"]])
+    ethalon = np.array([["xx","0","0"], ["0","yy","0"], ["0","0","zz"]])
     assert (S==ethalon).all()
 
     # 6.3.19
     S = label_matrix(np.array([[11,12,0], [-12,22,0], [0,0,33]]))
-    ethalon = np.array([["σxx","σxy","0"], ["-σxy","σyy","0"], ["0","0","σzz"]])
+    ethalon = np.array([["xx","xy","0"], ["-xy","yy","0"], ["0","0","zz"]])
     assert (S==ethalon).all()
 
     # 7.3.22
     S = label_matrix(np.array([[11,0,13], [0,22,0], [-13,0,33]]))
-    ethalon = np.array([["σxx","0","σxz"], ["0","σyy","0"], ["-σxz","0","σzz"]])
+    ethalon = np.array([["xx","0","xz"], ["0","yy","0"], ["-xz","0","zz"]])
     assert (S==ethalon).all()
 
     # 9.2.30
     S = label_matrix(np.array([[11,0,0], [0,11,0], [0,0,33]]))
-    ethalon = np.array([["σxx","0","0"], ["0","σxx","0"], ["0","0","σzz"]])
+    ethalon = np.array([["xx","0","0"], ["0","xx","0"], ["0","0","zz"]])
     assert (S==ethalon).all()
 
     # 28.1.107
     S = label_matrix(np.array([[11,0,0], [0,11,0], [0,0,11]]))
-    ethalon = np.array([["σxx","0","0"], ["0","σxx","0"], ["0","0","σxx"]])
+    ethalon = np.array([["xx","0","0"], ["0","xx","0"], ["0","0","xx"]])
     assert (S==ethalon).all()
 
 def test_symmetrized_conductivity_tensor():
@@ -320,7 +320,7 @@ def test_symmetrized_conductivity_tensor():
     rotations = [np.array([[1,0,0],[0,1,0],[0,0,1]])]
     time_reversals = [False]
     S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
-    ethalon = np.array([["σxx","σxy","σxz"], ["σyx","σyy","σyz"], ["σzx","σzy","σzz"]])
+    ethalon = np.array([["xx","xy","xz"], ["yx","yy","yz"], ["zx","zy","zz"]])
     assert (S==ethalon).all()
 
     # 1.2.2
@@ -328,7 +328,7 @@ def test_symmetrized_conductivity_tensor():
                  np.array([[1,0,0],[0,1,0],[0,0,1]])]
     time_reversals = [False, True]
     S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
-    ethalon = np.array([["σxx","σxy","σxz"], ["σxy","σyy","σyz"], ["σxz","σyz","σzz"]], dtype='<U4')
+    ethalon = np.array([["xx","xy","xz"], ["xy","yy","yz"], ["xz","yz","zz"]], dtype='<U4')
     assert (S==ethalon).all()
 
     # 3.1.6
@@ -336,7 +336,7 @@ def test_symmetrized_conductivity_tensor():
                  np.array([[-1,0,0],[0,1,0],[0,0,-1]])]
     time_reversals = [False, False]
     S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
-    ethalon = np.array([["σxx","0","σxz"], ["0","σyy","0"], ["σzx","0","σzz"]])
+    ethalon = np.array([["xx","0","xz"], ["0","yy","0"], ["zx","0","zz"]])
     assert (S==ethalon).all()
 
     # 3.3.8
@@ -344,7 +344,7 @@ def test_symmetrized_conductivity_tensor():
                  np.array([[-1,0,0],[0,1,0],[0,0,-1]])]
     time_reversals = [False, True]
     S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
-    ethalon = np.array([["σxx", "σxy","σxz"], ["-σxy", "σyy","σyz"], ["σxz","-σyz","σzz"]])
+    ethalon = np.array([["xx", "xy","xz"], ["-xy", "yy","yz"], ["xz","-yz","zz"]])
     assert (S==ethalon).all()
 
     # 4.2.10
@@ -354,7 +354,7 @@ def test_symmetrized_conductivity_tensor():
                  np.array([[ 1, 0, 0],[ 0,-1, 0],[ 0, 0, 1]])]
     time_reversals = [False, False, True, True]
     S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
-    ethalon = np.array([["σxx","0","σxz"], ["0","σyy","0"], ["σxz","0","σzz"]])
+    ethalon = np.array([["xx","0","xz"], ["0","yy","0"], ["xz","0","zz"]])
     assert (S==ethalon).all()
 
     # 6.1.17
@@ -364,7 +364,7 @@ def test_symmetrized_conductivity_tensor():
                  np.array([[-1, 0, 0],[ 0,-1, 0],[ 0, 0, 1]])]
     time_reversals = [False, False, False, False]
     S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
-    ethalon = np.array([["σxx","0","0"], ["0","σyy","0"], ["0","0","σzz"]])
+    ethalon = np.array([["xx","0","0"], ["0","yy","0"], ["0","0","zz"]])
     assert (S==ethalon).all()
 
     # 6.3.19
@@ -374,7 +374,7 @@ def test_symmetrized_conductivity_tensor():
                  np.array([[-1, 0, 0],[ 0, 1, 0],[ 0, 0,-1]])]
     time_reversals = [False, False, True, True]
     S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
-    ethalon = np.array([["σxx","σxy","0"], ["-σxy","σyy","0"], ["0","0","σzz"]])
+    ethalon = np.array([["xx","xy","0"], ["-xy","yy","0"], ["0","0","zz"]])
     assert (S==ethalon).all()
 
     # 7.3.22
@@ -384,7 +384,7 @@ def test_symmetrized_conductivity_tensor():
                  np.array([[-1, 0, 0],[ 0, 1, 0],[ 0, 0, 1]])]
     time_reversals = [False, False, True, True]
     S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
-    ethalon = np.array([["σxx","0","σxz"], ["0","σyy","0"], ["-σxz","0","σzz"]])
+    ethalon = np.array([["xx","0","xz"], ["0","yy","0"], ["-xz","0","zz"]])
     assert (S==ethalon).all()
 
     # 9.2.30
@@ -398,7 +398,7 @@ def test_symmetrized_conductivity_tensor():
                  np.array([[ 0, 1, 0],[-1, 0, 0],[ 0, 0, 1]])]
     time_reversals = [False, False, False, False, True, True, True, True]
     S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
-    ethalon = np.array([["σxx","0","0"], ["0","σxx","0"], ["0","0","σzz"]])
+    ethalon = np.array([["xx","0","0"], ["0","xx","0"], ["0","0","zz"]])
     assert (S==ethalon).all()
 
     # 28.1.107
@@ -416,7 +416,7 @@ def test_symmetrized_conductivity_tensor():
                  np.array([[ 0, 0,-1],[-1, 0, 0],[ 0, 1, 0]])]
     time_reversals = [False]*12
     S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
-    ethalon = np.array([["σxx","0","0"], ["0","σxx","0"], ["0","0","σxx"]])
+    ethalon = np.array([["xx","0","0"], ["0","xx","0"], ["0","0","xx"]])
     assert (S==ethalon).all()
 
     # 16.1.60
@@ -426,7 +426,7 @@ def test_symmetrized_conductivity_tensor():
                  np.array([[cos(-a), -sin(-a), 0],[sin(-a), cos(-a), 0],[0,0,1]])]
     time_reversals = [False]*3
     S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
-    ethalon = np.array([["σxx","σxy","0"], ["-σxy","σxx","0"], ["0","0","σzz"]])
+    ethalon = np.array([["xx","xy","0"], ["-xy","xx","0"], ["0","0","zz"]])
     assert (S==ethalon).all()
 
     # 16.1.61
@@ -438,5 +438,5 @@ def test_symmetrized_conductivity_tensor():
                  np.array([[cos(-a), -sin(-a), 0],[sin(-a), cos(-a), 0],[0,0,1]])]
     time_reversals = [False]*3+[True]*3
     S = label_matrix(symmetrized_conductivity_tensor(rotations, time_reversals))
-    ethalon = np.array([["σxx","0","0"], ["0","σxx","0"], ["0","0","σzz"]])
+    ethalon = np.array([["xx","0","0"], ["0","xx","0"], ["0","0","zz"]])
     assert (S==ethalon).all()
