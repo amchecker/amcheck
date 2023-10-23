@@ -51,18 +51,18 @@ def eprint(*args, **kwargs):
 def check_altermagnetism_orbit(symops, positions, spins, tol=DEFAULT_TOLERANCE,
                                verbose=False, silent=True):
     """
-    Check if a given Wyckoff orbit with a given spins is altermagnetic.
+    Check if a given Wyckoff orbit with a given spin pattern is altermagnetic.
 
     Parameters
     ----------
     symops : list of tuples
-        List of tuples that contains symmetry operations [(R0, t0), ..., Rk, tk)],
-        where Ri is 3x3 matrix and ti is 3-elements vector.
+        List of tuples containing symmetry operations [(R0, t0), ..., Rk, tk)],
+        where Ri is 3x3 matrix and ti is a 3-element vector.
     positions : array of arrays
         Array of arrays containing scaled (fractional) positions of atoms in
         a given Wyckoff orbit, i.e. [[0,0,0], [0.5,0.5,0.5]].
     spins : list of strings
-        List of string objects denoting spin designation of each atom.
+        List of string objects denoting the spin designation of each atom.
         Possible values are: "u", "U" for spin-up, "d", "D" for spin-down and
         "n", "N" to mark a non-magnetic atom.
     tol : float
@@ -70,7 +70,7 @@ def check_altermagnetism_orbit(symops, positions, spins, tol=DEFAULT_TOLERANCE,
     verbose : Bool
         Print some additional information during the execution.
     silent : Bool
-        Supress any print instructions if True.
+        Suppress any print instructions if True.
 
     Returns
     -------
@@ -81,22 +81,26 @@ def check_altermagnetism_orbit(symops, positions, spins, tol=DEFAULT_TOLERANCE,
     Raises
     ------
     ValueError
-        If len(positions) != len(spins)
+        If the number of atomic positions is not equal to the number of spins.
+
+    ValueError
+        If number of up and down spins is not the same (spins should be
+        compensated, otherwise it's not an altermagnet).
     """
 
     # if orbit has multiplicity 1, it cannot be altermagnetic
     if len(positions) == 1: return False
 
     if len(positions) != len(spins):
-        raise ValueError("Number of atomic positions should be the same as \
-number of spin designation: got {} and {} instead!".format(len(positions),
-                                                           len(spins)))
+        raise ValueError("The number of atomic positions should be the same as \
+the number of spin designations: got {} and {} instead!".format(len(positions),
+                                                            len(spins)))
 
-    # "normalize" spin designations to lowercase for an easier bookkeeping
+    # "normalize" spin designations to lowercase for easier bookkeeping
     spins = [s.lower() for s in spins]
 
-    # for a given spin determine antisymmetry operators among the space group
-    # operators
+    # for a given spin patter, determine antisymmetry operations among
+    # the space group operations
     magn_symops_filter = np.full(len(symops), True)
     for i in range(len(positions)):
         # we want to check only pairs of up-down spins
@@ -113,9 +117,9 @@ number of spin designation: got {} and {} instead!".format(len(positions),
                         (spins[i] == "d" and spins[j] == "u")):
                     continue
 
-                # check if up and down pair is related by some symmetry
+                # check if the up-down pair is related by some symmetry
                 dp = np.mod(np.dot(R, positions[i]) + t - positions[j], 1)
-                # a possible issue with numbers close to one
+                # a possible issue with numbers close to unity
                 for k in range(3):
                     if abs(1.0-dp[k]) < tol:
                         dp[k] = 0.0
@@ -132,7 +136,7 @@ number of spin designation: got {} and {} instead!".format(len(positions),
 
     if not magn_symops:
         if not silent and verbose:
-            print("Up and down sublattices are not related by symmetry: the material is Luttinger ferrimagnet!")
+            print("Up and down sublattices are not symmetry-related: the material is Luttinger ferrimagnet!")
         return False
 
     is_altermagnet = False
@@ -141,7 +145,7 @@ number of spin designation: got {} and {} instead!".format(len(positions),
 
     is_in_sym_related_pair = np.zeros(len(positions))
     is_in_IT_related_pair  = np.zeros(len(positions))
-    # Check if inversion symmetry is present in midpoint of the pair of
+    # Check if inversion symmetry is located in the midpoint of the pair of
     # magnetic atoms with opposite spin directions or if they are related by
     # translation
     for i in range(len(positions)):
@@ -156,9 +160,9 @@ number of spin designation: got {} and {} instead!".format(len(positions),
             for symop in magn_symops:
                 R, t = symop
 
-                # check if up and down pair is related by some symmetry
+                # check if the up-down pair is related by some symmetry
                 dp = np.mod(np.dot(R, positions[i]) + t - positions[j], 1)
-                # a possible issue with numbers close to one
+                # a possible issue with numbers close to unity
                 for k in range(3):
                     if abs(1.0-dp[k]) < tol:
                         dp[k] = 0.0
@@ -183,7 +187,7 @@ number of spin designation: got {} and {} instead!".format(len(positions),
                     if np.linalg.norm(midpoint_prime) < tol:
                         # the inversion is positioned at the midpoint:
                         # mark atoms i and j as the ones belonging to the pair
-                        # of opposite spins that has an inversion point at its
+                        # of opposite spins with an inversion point at its
                         # midpoint
                         is_in_IT_related_pair[i] = 1
                         is_in_IT_related_pair[j] = 1
@@ -194,7 +198,7 @@ number of spin designation: got {} and {} instead!".format(len(positions),
                 # if symop is translation
                 if (abs(np.trace(R)-3) < tol and np.linalg.norm(t) > tol):
                     dp = np.mod(positions[i] + t - positions[j], 1)
-                    # a possible issue with numbers close to one
+                    # a possible issue with numbers close to unity
                     for k in range(3):
                         if abs(1.0-dp[k]) < tol:
                             dp[k] = 0.0
@@ -235,21 +239,21 @@ def is_altermagnet(symops, atom_positions, equiv_atoms, chemical_symbols, spins,
     Parameters
     ----------
     symops : list of tuples
-        List of tuples that contains symmetry operations [(R0, t0), ..., Rk, tk)],
-        where Ri is 3x3 matrix and ti is 3-elements vector.
+        List of tuples containing symmetry operations [(R0, t0), ..., Rk, tk)],
+        where Ri is 3x3 matrix and ti is a 3-element vector.
     atom_positions : array of arrays
         Array of arrays containing scaled (fractional) positions of atoms in
         a given structure, i.e. [[0,0,0], [0.5,0.5,0.5]].
     equiv_atoms : array of int
-        Array that represents how atoms in the structure are split into group
+        Array representing how atoms in the structure are split into groups
         of symmetry equivalent atoms (Wyckoff orbit), i.e. [0 0 0 0 0 0 6 6]
-        means that there are two Wyckoff orbits consisting with atoms of id
+        means that there are two Wyckoff orbits consisting of atoms of id
         0 and 6.
     chemical_symbols : list of strings
         List of chemical symbols designated to each atom, i.e.
         ['Mn', 'Mn', 'Mn', 'Mn', 'Mn', 'Mn', 'Fe', 'Fe'].
     spins : list of strings
-        List of string objects denoting spin designation of each atom.
+        List of string objects denoting the spin designation of each atom.
         Possible values are: "u", "U" for spin-up, "d", "D" for spin-down and
         "n", "N" to mark a non-magnetic atom.
     tol : float
@@ -257,12 +261,13 @@ def is_altermagnet(symops, atom_positions, equiv_atoms, chemical_symbols, spins,
     verbose : Bool
         Print some additional information during the execution.
     silent : Bool
-        Supress any print instructions if True.
+        Suppress any print instructions if True.
 
     Returns
     -------
     altermagnet : Bool
-        Returns True if the orbit with a given spin configuration is
+        Returns True if the structure with a given spin configuration is
+        altermagnetic or False otherwise.
 
     Raises
     ------
@@ -270,16 +275,11 @@ def is_altermagnet(symops, atom_positions, equiv_atoms, chemical_symbols, spins,
         If number of up and down spins is not the same (spins should be
         compensated, otherwise it's not an altermagnet).
     RuntimeError
-        If for some reason no Wyckoff orbit was checked for altermagnetism.
+        If, for some reason, no Wyckoff orbit was checked for altermagnetism.
         This situation is possible when all atoms were marked as non-magnetic.
-        Although non-magnetic structure is not an altermagnet, we still want
-        to notify user to check for possible mistakes in the input.
+        Although the non-magnetic structure is not an altermagnet, we still want
+        to notify the user to check for possible mistakes in the input.
     """
-
-    # if symops list is empty, the spacegroup is definitely centrosymmetric,
-    # thus the orbit is altermagnetic
-    if not symops:
-        return True
 
     altermagnet = False
     check_was_performed = False
@@ -308,16 +308,16 @@ def is_altermagnet(symops, atom_positions, equiv_atoms, chemical_symbols, spins,
                 "Group of non-magnetic atoms ({}): skipping.".format(chemical_symbols[u]))
             continue
 
-        # a sanity check: number of up and down spins should be the same,
-        # otherwise it's not a antiferromagnet/altermagnet
+        # a sanity check: the number of up and down spins should be the same.
+        # Otherwise it's not an antiferromagnet/altermagnet
         N_u = orbit_spins.count("u")
         N_d = orbit_spins.count("d")
         if N_u != N_d:
-            raise ValueError("Number of up spins should be the same as down spins: " +
+            raise ValueError("The number of up spins should be the same as the number of down spins: " +
                              "got {} up and {} down spins!".format(N_u, N_d))
 
-        # a sanity check: in case if there is something wrong with input data
-        # in the way that we never reach the next line, we need to report it
+        # a sanity check: if there is something wrong with input data in the
+        # way that we never reach the following line, we need to report it
         check_was_performed = True
         is_orbit_altermagnetic = check_altermagnetism_orbit(symops,
                                                             orbit_positions, orbit_spins, tol, verbose, silent)
@@ -330,7 +330,7 @@ def is_altermagnet(symops, atom_positions, equiv_atoms, chemical_symbols, spins,
         if all_orbits_multiplicity_one:
             altermagnet = False
             if not silent:
-                print("Note: in this structure all orbits have multiplicity one.\n\
+                print("Note: in this structure, all orbits have multiplicity one.\n\
 This material can only be a Luttinger ferrimagnet.")
         else:
             raise RuntimeError("Something is wrong with the description of magnetic atoms!\n\
@@ -341,7 +341,7 @@ Have you provided a non-magnetic/ferromagnetic material?")
 
 def input_spins(num_atoms):
     """
-    Read list of spin designations for a given Wyckoff orbit from stdin.
+    Read a list of spin designations for a given Wyckoff orbit from stdin.
 
     Parameters
     ----------
@@ -351,31 +351,33 @@ def input_spins(num_atoms):
     Returns
     -------
     spins : list of strings
-        List of string objects denoting spin designation of each atom.
+        List of string objects denoting the spin designation of each atom.
         Possible values are: "u", "U" for spin-up, "d", "D" for spin-down and
         "n", "N" to mark a non-magnetic atom.
-        "nn", "NN" can be used to mark entire Wyckoff orbit as non-magnetic
+        "nn" or "NN" can be used to mark entire Wyckoff orbit as non-magnetic.
 
     Raises
     ------
     ValueError
         If the number of spins from input is not the same as num_atoms.
-        If the number of up and down spins is not the same: for an altermagnet
+
+    ValueError
+        If the number of up and down spins is not the same: for an altermagnet,
         spins should be compensated.
     """
 
     print("Type spin (u, U, d, D, n, N, nn or NN) for each of them (space separated):")
     spins = input().split()
-    # "normalize" spin designations to lowercase for an easier bookkeeping
+    # "normalize" spin designations to lowercase for easier bookkeeping
     spins = [s.lower() for s in spins]
 
-    # empty line or "nn" to mark all atoms in the orbit as nonmagnetic
+    # empty line or "nn" in input marks all atoms in the orbit as nonmagnetic
     if len(spins) < 1 or spins[0] == 'nn':
         return ["n"]*num_atoms
 
     if len(spins) != num_atoms:
         raise ValueError(
-            "Wrong number of spins: got {} instead of {}!".format(len(spins), num_atoms))
+            "Wrong number of spins was given: got {} instead of {}!".format(len(spins), num_atoms))
 
     if not all(s in ["u", "d", "n"] for s in spins):
         raise ValueError("Use u, U, d, D, n or N for spin designation!")
@@ -383,7 +385,7 @@ def input_spins(num_atoms):
     N_u = spins.count("u")
     N_d = spins.count("d")
     if N_u != N_d:
-        raise ValueError("Number of up spins should be the same as down spins: " +
+        raise ValueError("The number of up spins should be the same as the number of down spins: " +
                          "got {} up and {} down spins!".format(N_u, N_d))
 
     # all atoms in the orbit are nonmagnetic
@@ -396,8 +398,8 @@ def label_matrix(m, tol=1e-3):
     """
     Obtain a symbolic representation of a given numeric matrix.
 
-    The goal is to label the entries of the matrix, i.e. the conductivity
-    tensor, in the way that the number of labels is the same as the number
+    The goal is to label the matrix entries, i.e., the conductivity tensor,
+    in the way that the number of labels is the same as the number
     of independent components.
     For example, the matrix [[1,0,0],[0,1,0],[0,0,2]] is represented by
     [["xx", 0, 0],[0, "xx", 0], [0, 0, "zz"]].
@@ -405,13 +407,13 @@ def label_matrix(m, tol=1e-3):
     Parameters
     ----------
     m : 3x3 matrix
-        Input 3x3 matrix to find a symbolic representation for.
+        A 3x3 matrix to find a symbolic representation for.
     tol : float
         A tolerance parameter for numerical computations.
     Returns
     -------
     s : 3x3 matrix of strings
-        Symbolic matrix with labels obtained from a given matrix.
+        A symbolic matrix with labels obtained from a given matrix.
     """
 
     dictionary = "xx", "yy", "zz", "yz", "xz", "xy", "zy", "zx", "yx"
@@ -443,7 +445,7 @@ def symmetrized_conductivity_tensor(rotations, time_reversals):
     Parameters
     ----------
     rotations : list of 3x3 matrices
-        List of 3x3 matrices that contain symmetry operations.
+        List of 3x3 matrices that contains symmetry operations.
     time_reversals : list of booleans
         Each entry defines if the rotation in `rotations` list is a symmetry
         or antisymmetry operation.
@@ -483,18 +485,18 @@ def main(args):
             atoms = ase.io.read(filename)
             cell = atoms.get_cell(complete=True)[:]
 
-            # get space group number
+            # get the space group number
             spglib_cell = (
                 atoms.cell, atoms.get_scaled_positions(), atoms.numbers)
             sg = spglib.get_spacegroup(spglib_cell, symprec=args.symprec)
             sg_no = int(sg[sg.find('(') + 1:sg.find(')')])
             print("Spacegroup: {}".format(sg))
 
-            # if space group number is present in the input file (i.e. in cif),
+            # if the space group number is present in the input file (i.e. in cif),
             # check if it is consistent with the one we just got from the spglib
             if "spacegroup" in atoms.info:
                 if sg_no != atoms.info["spacegroup"].no:
-                    print("WARNING: space group from the input is different from the spglib \
+                    print("WARNING: the space group from the input is different from the spglib \
 analysis: {} (spglib) vs {} (input)!".format(sg_no, atoms.info['spacegroup'].no))
 
             primitive = spglib.standardize_cell((atoms.cell, atoms.get_scaled_positions(),
@@ -503,9 +505,9 @@ analysis: {} (spglib) vs {} (input)!".format(sg_no, atoms.info['spacegroup'].no)
                                                 symprec=args.symprec)
             prim_cell, prim_pos, prim_num = primitive
 
-            # The given unit cell might be non-primitive and if it is the case
-            # we will ask user: shall we keep using it or shall we use a
-            # primitive one instead?
+            # The given unit cell might be non-primitive, and if this is the
+            # case, we will ask the user: shall we keep using it, or shall we
+            # use a primitive one instead?
             if abs(np.linalg.det(atoms.cell) - np.linalg.det(prim_cell)) > args.tol:
                 symmetry = spglib.get_symmetry(primitive, symprec=args.symprec)
                 rotations = symmetry['rotations']
@@ -516,12 +518,12 @@ analysis: {} (spglib) vs {} (input)!".format(sg_no, atoms.info['spacegroup'].no)
                 print("Do you want to use it instead? (Y/n)")
                 answer = input()
                 if answer.lower() != "n":
-                    print("Primitive unit cell will be used.")
+                    print("The primitive unit cell will be used.")
                     atoms = Atoms(prim_num, cell=prim_cell,
                                   scaled_positions=prim_pos)
                     equiv_atoms = symmetry['equivalent_atoms']
                 else:
-                    print("Original non-primitive unit cell will be used.")
+                    print("The original non-primitive unit cell will be used.")
 
                     symmetry_dataset = spglib.get_symmetry_dataset(
                         spglib_cell, symprec=args.symprec)
@@ -552,7 +554,7 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
                         print(T)
 
                     # All possible supercells can be grouped by det(T) and
-                    # within each group the amount of possible distinct
+                    # within each group, the amount of possible distinct
                     # supercells is finite.
                     # All of them can be enumerated using the Hermite Normal
                     # Form, H.
@@ -568,11 +570,11 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
                     tau = [np.mod([i, j, k] @ prim_cell @ np.linalg.inv(cell), 1)
                            for i in range(H[0, 0]) for j in range(H[1, 1]) for k in range(H[2, 2])]
 
-                    # The final collection of symmetry operators is a copy of
-                    # original augmented by the new translations:
+                    # The final collection of symmetry operations is a copy of
+                    # the original operations augmented by the new translations:
                     # (R,t) = (R0,t0)*{(E,0) + (E,t1) + ... + (E,tN)}
-                    # However, original fractional translations should be transformed
-                    # to the basis of a new cell as well.
+                    # However, original fractional translations should also be
+                    # transformed to the basis of a new cell.
                     N = int(np.rint(np.linalg.det(H)))
                     rotations = np.tile(rotations, (N, 1, 1))
                     translations = np.tile(translations, (N, 1))
@@ -607,7 +609,7 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
                     print(r)
                     print(t)
 
-            # for convenience we will create an auxiliary file that user can
+            # for convenience, we will create an auxiliary file that the user can
             # use to assign spins while examining the file in some visualizer
             aux_filename = filename+"_amcheck.vasp"
             print()
@@ -615,7 +617,7 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
                 aux_filename))
             ase.io.vasp.write_vasp(aux_filename, atoms, direct=True)
 
-            # get spins as an input from user
+            # get spins from user's input
             chemical_symbols = atoms.get_chemical_symbols()
             spins = ['n' for i in range(len(chemical_symbols))]
             for u in np.unique(equiv_atoms):
@@ -652,7 +654,7 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
 def main_ahc_type(args):
     """
     Determine the type (up to an equivalency) of Anomalous Hall Coefficient 
-    for a given structure.
+    for a given material.
     """
 
     for filename in args.file:
@@ -677,17 +679,17 @@ for non-magnetic atom):")
                 mm = input()
                 mm = list(map(float, mm.split()))
 
-                # if user provides an empty line as input, the atom is
+                # if the user provides an empty line as input, the atom is
                 # non-magnetic: no need to do anything
                 if not mm:
                     continue
 
                 if len(mm) != 3:
-                    raise ValueError("Expected 3 numbers for magnetic moment \
-definition!")
+                    raise ValueError("Three numbers for magnetic moment \
+definition were expected!")
                 magnetic_moments[i] = mm
 
-            print("Magnetic moments assigned:")
+            print("Assigned magnetic moments:")
             print(magnetic_moments)
             print()
 
@@ -713,7 +715,7 @@ definition!")
             print()
 
             Sa = label_matrix((S - np.transpose(S))/2)
-            print("Antisymmetric part of conductivity tensor (Anomalous Hall Effect):")
+            print("The antisymmetric part of the conductivity tensor (Anomalous Hall Effect):")
             print(Sa)
             print()
 
