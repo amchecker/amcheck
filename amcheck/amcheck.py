@@ -1,5 +1,5 @@
 # ********************************************************************************
-# Copyright 2023 Andriy Smolyanyuk, Olivia Taivo, Libor Smejkal, Igor Mazin
+# Copyright 2023 Andriy Smolyanyuk, Libor Smejkal, Igor Mazin
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files
