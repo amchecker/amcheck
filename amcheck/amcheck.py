@@ -457,9 +457,12 @@ def symmetrized_conductivity_tensor(rotations, time_reversals):
         Entries are numbers, use `label_matrix` function to get symbolic
         representation.
     """
-    # a seed matrix to be symmetrized: each entry has a different order of
-    # magnitude to avoid accidental degeneracies
-    seed   = np.array([[1e0, 1e1, 1e2], [1e3, 1e4, 1e5], [1e6, 1e7, 1e8]])
+    # a seed matrix to be symmetrized: Qa*diagm(s)*Qb, where s = [s1, s2, s3]
+    # some distinct random singular values, A = Qa*Ra and B = Qb*Rb are
+    # QR decompositions of random matrices
+    seed   = np.array([[ 0.18848,   -0.52625,    0.047702],
+                       [  0.403317, -0.112371, -0.0564825],
+                       [ -0.352134,  0.350489,  0.0854533]])
     seed_T = np.transpose(seed)
 
     S = np.zeros((3,3))
@@ -705,17 +708,40 @@ definition were expected!")
                     angle_tolerance=-1.0, mag_symprec=args.mag_symprec,
                     is_axial=True, with_time_reversal=True)
 
-            T = np.transpose(atoms.cell)
+            # The given unit cell might have some uncertainties; thus, for the
+            # transformation matrix T, we'd like to take the "idealized" unit
+            # cell, which conforms to the obtained space group.
+            refined_cell, _, _ = spglib.refine_cell(spglib_cell,
+                                                    symprec=args.symprec,
+                                                    angle_tolerance=-1.0)
+            refined_cell = np.rint(atoms.cell @ np.linalg.inv(refined_cell)) @ refined_cell
+
+            T = np.transpose(refined_cell)
             rotations = [T @ R @ np.linalg.inv(T) for R in symmetries['rotations']]
             time_reversals = symmetries['time_reversals']
+            if args.verbose:
+                print("Symmetry operations:")
+                np.set_printoptions(precision=3)
+                for (i, (r, t)) in enumerate(zip(rotations, time_reversals)):
+                    sym_type = "Time reversal: {}".format(t)
+                    print("{}: {}".format(i+1, sym_type))
+                    with np.printoptions(precision=3, suppress=True):
+                        print(r)
+                print()
 
             S = symmetrized_conductivity_tensor(rotations, time_reversals)
             print("Conductivity tensor:")
+            if args.verbose:
+                with np.printoptions(precision=7, suppress=True):
+                    print(S)
             print(label_matrix(S))
             print()
 
             Sa = label_matrix((S - np.transpose(S))/2)
             print("The antisymmetric part of the conductivity tensor (Anomalous Hall Effect):")
+            if args.verbose:
+                with np.printoptions(precision=7, suppress=True):
+                    print((S-np.transpose(S))/2)
             print(Sa)
             print()
 
