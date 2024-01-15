@@ -1,4 +1,4 @@
-# amcheck (WIP)
+# amcheck
 `amcheck` is the program (and a library) to check, based on the symmetry arguments,
 whether a given material is an altermagnet.
 
@@ -11,11 +11,11 @@ The underlying idea is that some pre-classification was already done
 and the user wants to figure out if the given material is an altermagnet or not, thus an antiferromagnet.
 
 ## Installation
-The code is written in `python` and has the following libraries as its 
-dependencies: `ase`, `spglib` and `diophantine`, that can be installed using `pip`:
+The code is written in `python` and can be installed using `pip`:
 ```
-pip install ase spglib diophantine
+pip install amcheck
 ```
+It has the following packages among its dependencies: `ase`, `spglib` and `diophantine`.
 
 ## Usage
 To use it as a command line tool, one provides one or more structure files
