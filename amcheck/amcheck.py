@@ -1,5 +1,5 @@
 # ********************************************************************************
-# Copyright 2023 Andriy Smolyanyuk, Libor Smejkal, Igor Mazin
+# Copyright 2023-2024 Andriy Smolyanyuk, Libor Smejkal, Igor Mazin
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files
@@ -46,6 +46,26 @@ DEFAULT_TOLERANCE = 1e-3  # tolerance for numeric operations
 def eprint(*args, **kwargs):
     """ Print to stderr."""
     print(*args, file=sys.stderr, **kwargs)
+
+
+def bring_in_cell(r, tol=DEFAULT_TOLERANCE):
+    """
+    Brings an atomic position, defined in the fractional coordinate system,
+    to the origin unit cell.
+
+    Parameters
+    ----------
+    r : array
+        Array containing scaled (fractional) positions of an atom.
+    tol : float
+        A tolerance parameter for numerical computations.
+    """
+    r = np.mod(r, 1)
+    # a possible issue with numbers close to unity, if the distances are later
+    # computed: mod(0.99999,1)=0.99999, but for the practical applications it
+    # is reasonable to move it to the right of the origin instead
+    r[np.isclose(np.ones(r.shape), r, atol=tol)] = 1.0 - r[np.isclose(np.ones(r.shape), r, atol=tol)]
+    return r
 
 
 def check_altermagnetism_orbit(symops, positions, spins, tol=DEFAULT_TOLERANCE,
@@ -99,7 +119,7 @@ the number of spin designations: got {} and {} instead!".format(len(positions),
     # "normalize" spin designations to lowercase for easier bookkeeping
     spins = [s.lower() for s in spins]
 
-    # for a given spin patter, determine antisymmetry operations among
+    # for a given spin pattern, determine antisymmetry operations among
     # the space group operations
     magn_symops_filter = np.full(len(symops), True)
     for i in range(len(positions)):
@@ -118,11 +138,8 @@ the number of spin designations: got {} and {} instead!".format(len(positions),
                     continue
 
                 # check if the up-down pair is related by some symmetry
-                dp = np.mod(np.dot(R, positions[i]) + t - positions[j], 1)
-                # a possible issue with numbers close to unity
-                for k in range(3):
-                    if abs(1.0-dp[k]) < tol:
-                        dp[k] = 0.0
+                dp = np.dot(R, positions[i]) + t - positions[j]
+                dp = bring_in_cell(dp, tol)
 
                 if np.linalg.norm(dp) < tol:
                     symop_is_present |= True
@@ -161,11 +178,8 @@ the number of spin designations: got {} and {} instead!".format(len(positions),
                 R, t = symop
 
                 # check if the up-down pair is related by some symmetry
-                dp = np.mod(np.dot(R, positions[i]) + t - positions[j], 1)
-                # a possible issue with numbers close to unity
-                for k in range(3):
-                    if abs(1.0-dp[k]) < tol:
-                        dp[k] = 0.0
+                dp = np.dot(R, positions[i]) + t - positions[j]
+                dp = bring_in_cell(dp, tol)
 
                 if np.linalg.norm(dp) < tol:
                     is_in_sym_related_pair[i] = 1
@@ -177,12 +191,7 @@ the number of spin designations: got {} and {} instead!".format(len(positions),
                     midpoint_prime -= midpoint
 
                     # bring it back to the unit cell
-                    midpoint_prime = np.mod(midpoint_prime, 1)
-
-                    # a possible issue with numbers close to one
-                    for k in range(3):
-                        if abs(1.0-midpoint_prime[k]) < tol:
-                            midpoint_prime[k] = 0.0
+                    midpoint_prime = bring_in_cell(midpoint_prime, tol)
 
                     if np.linalg.norm(midpoint_prime) < tol:
                         # the inversion is positioned at the midpoint:
@@ -197,11 +206,8 @@ the number of spin designations: got {} and {} instead!".format(len(positions),
 
                 # if symop is translation
                 if (abs(np.trace(R)-3) < tol and np.linalg.norm(t) > tol):
-                    dp = np.mod(positions[i] + t - positions[j], 1)
-                    # a possible issue with numbers close to unity
-                    for k in range(3):
-                        if abs(1.0-dp[k]) < tol:
-                            dp[k] = 0.0
+                    dp = positions[i] + t - positions[j]
+                    dp = bring_in_cell(dp, tol)
 
                     if np.linalg.norm(dp) < tol:
                         # atoms i and j are related by translation
