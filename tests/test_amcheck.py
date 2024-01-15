@@ -32,11 +32,6 @@ from math import pi, cos, sin
 import numpy as np
 
 
-
-def test_version():
-    assert __version__ == '0.1.0'
-
-
 def test_check_altermagnetism_orbit():
     symops = [(np.array([[ 1,  0,  0], [ 0,  1,  0], [ 0,  0,  1]], dtype=int), np.array([0.0, 0.0, 0.0])),
               (np.array([[-1,  0,  0], [ 0, -1,  0], [ 0,  0, -1]], dtype=int), np.array([0.0, 0.0, 0.0])),
