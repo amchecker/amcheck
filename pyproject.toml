@@ -3,8 +3,8 @@ name = "amcheck"
 version = "1.0.0"
 description = "amcheck is the program (and a library) to check, based on the symmetry arguments, whether a given material is an altermagnet."
 authors = ["Andriy Smolyanyuk <andriysmolyanyuk@gmail.com>",
-           "Libor Smejkal",
-           "Igor I. Mazin"]
+           "Libor Smejkal <lsmejkal@uni-mainz.de>",
+           "Igor I. Mazin <imazin2@gmu.edu>"]
 maintainers = ["Andriy Smolyanyuk <andriysmolyanyuk@gmail.com>"]
 readme = "README.md"
 
