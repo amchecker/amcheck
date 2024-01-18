@@ -170,11 +170,23 @@ Hall vector:
 ## Contributors
 Andriy Smolyanyuk[1], Libor Šmejkal[2] and Igor I. Mazin[3]
 
-[1] Technische Universität Wien, Vienna, Austria
+[1] Institute of Solid State Physics, TU Wien, 1040 Vienna, Austria
 
 [2] Johannes Gutenberg Universität Mainz, Mainz, Germany
 
 [3] George Mason University, Fairfax, USA
 
 ## How to cite
-The preparation of the manuscript describing the underlying ideas is currently in process.
+If you're using the `amcheck` package, please cite the manuscript describing the underlying ideas:
+[A tool to check whether a symmetry-compensated collinear magnetic material is antiferro- or altermagnetic](https://arxiv.org/abs/2401.08784).
+
+```bibtex
+@misc{smolyanyuk2024tool,
+      title={A tool to check whether a symmetry-compensated collinear magnetic material is antiferro- or altermagnetic}, 
+      author={Andriy Smolyanyuk and Libor \v{S}mejkal and Igor I. Mazin},
+      year={2024},
+      eprint={2401.08784},
+      archivePrefix={arXiv},
+      primaryClass={cond-mat.mtrl-sci}
+}
+```
