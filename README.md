@@ -17,6 +17,12 @@ pip install amcheck
 ```
 It has the following packages among its dependencies: `ase`, `spglib` and `diophantine`.
 
+Depending on your OS and the setup of the command line tool used, one might need to make adjustments
+if the `amcheck` executable is not found (i.e., if one encounters `amcheck: command not found` or similar error).
+Please consult the
+[Installing to the User Site](https://packaging.python.org/en/latest/tutorials/installing-packages/#installing-to-the-user-site)
+chapter of the Python Packaging User Guide to see how to fix the issue.
+
 ## Usage
 To use it as a command line tool, one provides one or more structure files
 (the code will internally loop over all listed files) and, when prompted,
@@ -109,14 +115,14 @@ equiv_atoms  = [0, 0, 1, 1]
 # high-pressure FeO: Fe at As positions, O at Ni positions => afm
 chem_symbols = ["O", "O", "Fe", "Fe"]
 spins = ["n", "n", "u", "d"]
-print(is_altermagnet(symops, positions, equiv_atoms, chem_symbols,
-                     spins))
+print(is_altermagnet(symmetry_operations, positions, equiv_atoms,
+                     chem_symbols, spins))
 
 # MnTe: Mn at Ni positions, Te at As positions => am
 chem_symbols = ["Mn", "Mn", "Te", "Te"]
 spins = ["u", "d", "n", "n"]
-print(is_altermagnet(symops, positions, equiv_atoms, chem_symbols,    
-                     spins))
+print(is_altermagnet(symmetry_operations, positions, equiv_atoms,
+                     chem_symbols, spins))
 ```
 
 
