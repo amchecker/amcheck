@@ -184,15 +184,28 @@ Andriy Smolyanyuk[1], Libor Šmejkal[2] and Igor I. Mazin[3]
 
 ## How to cite
 If you're using the `amcheck` package, please cite the manuscript describing the underlying ideas:
-[A tool to check whether a symmetry-compensated collinear magnetic material is antiferro- or altermagnetic](https://arxiv.org/abs/2401.08784).
+[A tool to check whether a symmetry-compensated collinear magnetic material is antiferro- or altermagnetic](https://scipost.org/SciPostPhysCodeb.30).
 
 ```bibtex
-@misc{smolyanyuk2024tool,
-      title={A tool to check whether a symmetry-compensated collinear magnetic material is antiferro- or altermagnetic}, 
-      author={Andriy Smolyanyuk and Libor \v{S}mejkal and Igor I. Mazin},
-      year={2024},
-      eprint={2401.08784},
-      archivePrefix={arXiv},
-      primaryClass={cond-mat.mtrl-sci}
+@Article{10.21468/SciPostPhysCodeb.30,
+	title={{A tool to check whether a symmetry-compensated collinear magnetic material is antiferro- or altermagnetic}},
+	author={Andriy Smolyanyuk and Libor \v{S}mejkal and Igor I. Mazin},
+	journal={SciPost Phys. Codebases},
+	pages={30},
+	year={2024},
+	publisher={SciPost},
+	doi={10.21468/SciPostPhysCodeb.30},
+	url={https://scipost.org/10.21468/SciPostPhysCodeb.30},
+}
+
+@Article{10.21468/SciPostPhysCodeb.30-r1.0,
+	title={{Codebase release r1.0 for amcheck}},
+	author={Andriy Smolyanyuk and Libor \v{S}mejkal and Igor I. Mazin},
+	journal={SciPost Phys. Codebases},
+	pages={30-r1.0},
+	year={2024},
+	publisher={SciPost},
+	doi={10.21468/SciPostPhysCodeb.30-r1.0},
+	url={https://scipost.org/10.21468/SciPostPhysCodeb.30-r1.0},
 }
 ```
