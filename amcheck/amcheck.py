@@ -664,6 +664,14 @@ def main_ahc_type(args):
     """
     Determine the type (up to an equivalency) of Anomalous Hall Coefficient 
     for a given material.
+    Raises
+    ------
+    ValueError
+        If the provided magnetic moment is not represented by three numbers.
+
+    RuntimeError
+        If spglib.get_magnetic_symmetry_dataset return None, i.e. not able to
+        determine the magnetic symmetry of a given structure.
     """
 
     for filename in args.file:
@@ -706,6 +714,10 @@ definition were expected!")
                            atoms.numbers, np.array(magnetic_moments))
             MSG = spglib.get_magnetic_symmetry_dataset(spglib_cell,
                                                        symprec=args.symprec, mag_symprec=args.mag_symprec)
+            if MSG is None:
+                raise RuntimeError("spglib is not able to determine the magnetic symmetry!\n\
+Check if the crystal structure and magnetic pattern are reasonable.\n\
+Additionally, try different tolerance values.")
 
             print("Magnetic Space Group:",
                   spglib.get_magnetic_spacegroup_type(MSG['uni_number']))
@@ -713,6 +725,10 @@ definition were expected!")
             symmetries = spglib.get_magnetic_symmetry(spglib_cell, symprec=args.symprec,
                     angle_tolerance=-1.0, mag_symprec=args.mag_symprec,
                     is_axial=True, with_time_reversal=True)
+            if symmetries is None:
+                raise RuntimeError("spglib is not able to determine the magnetic symmetry!\n\
+Check if the crystal structure and magnetic pattern are reasonable.\n\
+Additionally, try different tolerance values.")
 
             # The given unit cell might have some uncertainties; thus, for the
             # transformation matrix T, we'd like to take the "idealized" unit
