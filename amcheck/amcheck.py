@@ -717,9 +717,26 @@ definition were expected!")
             # The given unit cell might have some uncertainties; thus, for the
             # transformation matrix T, we'd like to take the "idealized" unit
             # cell, which conforms to the obtained space group.
-            refined_cell, _, _ = spglib.refine_cell(spglib_cell,
-                                                    symprec=args.symprec,
-                                                    angle_tolerance=-1.0)
+
+            # A caveat: refine_cell function might lead to using the
+            # conventional instead of the original primitive cell: that is not
+            # what we want.
+            # Thus, we will explicitly use the standardize_cell function to
+            # get the "idealized" unit cell, but we need to be careful to
+            # continue using the same type of the unit cell (primitive or
+            # conventional) as we had originally.
+            primitive = spglib.standardize_cell(spglib_cell, to_primitive=True,
+                                                no_idealize=True,
+                                                symprec=args.symprec)
+            prim_cell, prim_pos, prim_num = primitive
+            is_primitive = abs(np.linalg.det(atoms.cell) - np.linalg.det(prim_cell)) < args.tol
+
+            refined_cell, _, _ = spglib.standardize_cell(spglib_cell,
+                                                         to_primitive=is_primitive,
+                                                         no_idealize=False,
+                                                         symprec=args.symprec,
+                                                         angle_tolerance=-1.0)
+
             refined_cell = np.rint(atoms.cell @ np.linalg.inv(refined_cell)) @ refined_cell
 
             T = np.transpose(refined_cell)

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "amcheck"
-version = "1.0.0"
+version = "1.0.1"
 description = "amcheck is the program (and a library) to check, based on the symmetry arguments, whether a given material is an altermagnet."
 authors = ["Andriy Smolyanyuk <andriysmolyanyuk@gmail.com>",
            "Libor Smejkal <lsmejkal@uni-mainz.de>",
