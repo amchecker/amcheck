@@ -23,6 +23,29 @@ Please consult the
 [Installing to the User Site](https://packaging.python.org/en/latest/tutorials/installing-packages/#installing-to-the-user-site)
 chapter of the Python Packaging User Guide to see how to fix the issue.
 
+## Installation in a virtual environment
+Alternatively, it might be more convenient to install the `amcheck` package in its own virtual environment:
+in this case, there is no interference between various packages, especially if they depend on concurring versions of the same library.
+
+Here, we briefly describe how to set up a virtual environment using `venv` tool (examples are Linux-specific).
+Create an environment with
+```
+python -m venv py-amcheck
+```
+Activate it using:
+```
+source py-amcheck/bin/activate
+```
+Install the `amcheck` package using `pip` when the virtual environment is used for the first time:
+```
+pip install amcheck
+```
+
+After the package is installed, the `amcheck` command and the `python` module are available in `py-amcheck` environment.
+Use `deactivate` to exit the environment and return to the basic shell.
+
+For more details on the virtual environments, see the following [link](https://docs.python.org/3/tutorial/venv.html).
+
 ## Usage
 To use it as a command line tool, one provides one or more structure files
 (the code will internally loop over all listed files) and, when prompted,
