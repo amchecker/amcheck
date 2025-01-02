@@ -690,8 +690,8 @@ def main_ahc_type(args):
 
             magnetic_moments = [[0, 0, 0] for i in range(len(positions))]
             print()
-            print("Type magnetic moments for each atom ('mx my mz' or empty line \
-for non-magnetic atom):")
+            print("Type magnetic moments for each atom in Cartesian coordinates\n\
+('mx my mz' or empty line for non-magnetic atom):")
             for i in range(len(positions)):
                 mm = input()
                 mm = list(map(float, mm.split()))

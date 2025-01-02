@@ -163,8 +163,8 @@ O [0.19442001 0.80558002 0.5       ]
 O [0.80558002 0.19442001 0.5       ]
 O [0.69441998 0.69441998 0.        ]
 
-Type magnetic moments for each atom
- ('mx my mz' or empty line for non-magnetic atom):
+Type magnetic moments for each atom in Cartesian coordinates
+('mx my mz' or empty line for non-magnetic atom):
  1  1  0
 -1 -1  0
  0  0  0
