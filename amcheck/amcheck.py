@@ -590,6 +590,7 @@ original cell/primitive cell ratio: got {} instead of {}!".format(det_T, det_rat
                     for (i, t) in enumerate(tau):
                         for j in range(i*N_ops_prim, (i+1)*N_ops_prim):
                             translations[j] = np.mod(translations[j] @ prim_cell @ np.linalg.inv(cell) + t, 1)
+                            rotations[j] = np.linalg.inv(np.transpose(T)) @ rotations[j] @ np.transpose(T)
 
             # The original unit cell is primitive
             else:
