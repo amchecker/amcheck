@@ -1,24 +1,25 @@
-[tool.poetry]
+[project]
 name = "amcheck"
 version = "1.0.2"
 description = "amcheck is the program (and a library) to check, based on the symmetry arguments, whether a given material is an altermagnet."
-authors = ["Andriy Smolyanyuk <andriysmolyanyuk@gmail.com>",
-           "Libor Smejkal <lsmejkal@uni-mainz.de>",
-           "Igor I. Mazin <imazin2@gmu.edu>"]
-maintainers = ["Andriy Smolyanyuk <andriysmolyanyuk@gmail.com>"]
+authors = [{name = "Andriy Smolyanyuk", email = "andriysmolyanyuk@gmail.com"},
+           {name = "Libor Smejkal", email = "lsmejkal@uni-mainz.de"},
+           {name = "Igor I. Mazin", email= "imazin2@gmu.edu"}]
+maintainers = [{name = "Andriy Smolyanyuk", email = "andriysmolyanyuk@gmail.com"}]
+license = {text = "MIT"}
 readme = "README.md"
+requires-python = ">=3.10,<4"
+dependencies =  [
+"numpy (>=1.20.0)",
+"ase (>=3.22.1)",
+"spglib (>=2.5.0)",
+"Diophantine (>=0.2.0)"
+]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-numpy = "^1.20.0"
-ase = "^3.22.1"
-spglib = "^2.5.0"
-Diophantine = "^0.2.0"
-
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^6.2.5"
 
-[tool.poetry.scripts]
+[project.scripts]
 amcheck = "amcheck.amcheck:cli"
 
 [build-system]
